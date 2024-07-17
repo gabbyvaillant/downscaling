@@ -1,7 +1,7 @@
 # **Climate Downscaling**
 
 ## Introduction
-Repository for code created for my climate downscaling research. The goal of this project is to perform machine learning-based climate downscaling on our desired climate datasets. Currently, I am focused on using the TimeGAN model to accept weather data files (netCDF) and generate synthetic data. After that, I will focus on implementing the climate downscaling aspect to this TimeGAN model. 
+This repository contains code developed for climate downscaling research using machine learning techniques. The objective is to utilize the TimeGAN model for downscaling selected climate datasets (GCMs in netCDF file format). The project initially focuses on generating synthetic weather data and aims to implement climate downscaling methodologies within the TimeGAN framework. I use the ydata-synthetic library to do this because it is an updated version of the TimeGAN framework. 
 
 ## Code Explanation
 
