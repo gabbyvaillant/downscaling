@@ -1,9 +1,10 @@
 # **Climate Downscaling**
 
 Repository for code created for my climate downscaling research.
-GOAL of research project: Preform machine learning-based climate downscaling on our desired climate datasets.
 
-Small scale goal as of 07/17: Input weather .csv file into TimeGAN model (using ydata-synthetic) and evaluate accuracy
+<u>GOAL of research project:</u> Preform machine learning-based climate downscaling on our desired climate datasets.
+
+<u>Small scale goal as of 07/17</u>: Input weather .csv file into TimeGAN model (using ydata-synthetic) and evaluate accuracy
 
 **Code Explanation**
 
