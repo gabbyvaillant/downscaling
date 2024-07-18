@@ -1,15 +1,13 @@
-"""Climate downscaling applied to TimeGAN
+"""Climate downscaling applied to TimeGAN 
 
-Applying climate downscaling aspect to the TimeGAN model developed by Jinsung Yoon
-
-I am using the same format and editing the functions from their utils.py
+- TimeGAN model developed by Jinsung Yoon
+- Editing the functions from TimeGAN data_loading.py
 
 TimeGAN paper link: https://papers.nips.cc/paper/8789-time-series-generative-adversarial-networks
 
-
 -----------------------------
 
-preprocessing.py
+data_loading.py
 
 (0) MinMaxScaler: Custom Min Max normalizer
 (1) sine_data_generation: Generate sine dataset (EDIT THIS FUNCTION LATER)
