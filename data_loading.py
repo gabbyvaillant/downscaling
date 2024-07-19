@@ -81,7 +81,7 @@ def netCDF_data_loading(nc_file, var_names, seq_len):
     Args:
     nc_file (str): Path to the climate data (NetCDF file).
     var_names (list of str): List of variable names to downscale from nc_file.
-    seq_len (int): Sequence list.
+    seq_len (int): Sequence length.
     
     Returns:
     data (list of np.ndarray): List of preprocessed sequences.
