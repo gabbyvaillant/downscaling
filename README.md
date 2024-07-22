@@ -19,3 +19,14 @@ This repository contains code developed for climate downscaling research using m
 
 * Transform climate data in netCDF format to preprocessed data (normalized and split into squences)
 * Generate Sine data (FIX LATER)
+
+(3) data directory
+
+(a) domnys-nam_218_20191011_0000_0000.nc
+* Example of one NetCDF file that contains our three variables of interest to be downscaled
+
+  ## Info:
+  * Variables of interest:
+    - TMP_1000mb (Temperature at surface level)
+    - RH_1000mb (Relative Humidity at surface level)
+    - VVEL_1000mb (Pressure at surface level)
