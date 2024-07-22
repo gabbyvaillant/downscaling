@@ -1,9 +1,10 @@
-"""Climate downscaling applied to TimeGAN 
+"""Climate downscaling applied to TimeGAN
 
 - TimeGAN model developed by Jinsung Yoon
 - Editing the functions from TimeGAN data_loading.py
 
 TimeGAN paper link: https://papers.nips.cc/paper/8789-time-series-generative-adversarial-networks
+
 
 -----------------------------
 
@@ -81,7 +82,7 @@ def netCDF_data_loading(nc_file, var_names, seq_len):
     Args:
     nc_file (str): Path to the climate data (NetCDF file).
     var_names (list of str): List of variable names to downscale from nc_file.
-    seq_len (int): Sequence length.
+    seq_len (int): Sequence list.
     
     Returns:
     data (list of np.ndarray): List of preprocessed sequences.
@@ -107,11 +108,14 @@ def netCDF_data_loading(nc_file, var_names, seq_len):
     # Merge DataFrames on 'time', 'lat', and 'lon'
     merged_df = dfs[0]
     for df in dfs[1:]:
-        merged_df = merged_df.merge(df, on=['time', 'lat', 'lon'], how='inner')
         
+        #NOTE: Change the below line depending on the index of your .nc file
+        #merged_df = merged_df.merge(df, on=['time', 'lat', 'lon'], how='inner')
+        merged_df = merged_df.merge(df, on = ['x', 'y', 'time'], how = 'inner')
+    
         # Normalize the data
-        for column in var_names:
-            merged_df[column] = MinMaxScaler(merged_df[column])
+    for column in var_names:
+        merged_df[column] = MinMaxScaler(merged_df[column])
 
     # Convert DataFrame to numpy array for sequence splitting
     orig_data = merged_df[var_names].values
@@ -136,22 +140,26 @@ def netCDF_data_loading(nc_file, var_names, seq_len):
 
 Info: Daily avg surface temp (tas) and relative humidity (hurs) dataset for 2015
 Dimensions: time, lat, lon
+NOTE: 
+    - This example is included because this dataset includes data for every day whereas
+the dataset we aim to downscale is inconsistent.
+    - Change the merged_df line in the netCDF_data_loading function to the correct index
 
 
 """
 
-# Specify arguments for function
+#Specifying args for function
 nc_file = '/Users/gabbyvaillant/EDA-MRI-ESM/source_gcm_data/temp_humi_day_MRI-ESM2-0_ssp585_r1i1p1f1_gn_20150101-20151231.nc'
 var_names = ['tas', 'hurs']
-seq_len = 10
+seq_len = 7
 
-data = netCDF_data_loading(nc_file, var_names, seq_len)
+#data = netCDF_data_loading(nc_file, var_names, seq_len)
 
-print("Length:")
-print(len(data))
+#print("Length:")
+#print(len(data))
 
-print("First Sequence:")
-print(data[0])
+#print("First Sequence:")
+#print(data[0])
 
 
 
@@ -160,14 +168,19 @@ print(data[0])
 Info: NAM-NMM data includes 445 variables and is representing a 3 hour time slice ? of 02/20/2019
 Dimensions: y, x, time = 1
 
-NOTE: since the dimensions are different names we need to change the function
+NOTE: 
+    - Change the merged_df line in the netCDF_data_loading function to the correct index
 
 """
 
-#SELECT VARS:
-#netCDF_data_loading('/Users/gabbyvaillant/Downloads/BNL/NAM2019/domnys-nam_218_20190220_0000_000.nc', 2)
+#Soecifying args for function
+nc_file2 = '/Users/gabbyvaillant/Downloads/BNL/NAM2019/domnys-nam_218_20191011_0000_000.nc'
+var_names = ['TMP_1000mb', 'RH_1000mb', 'VVEL_1000mb']
+seq_len = 7
 
-
+data = netCDF_data_loading(nc_file2, var_names, seq_len)
+print("First Sequence:")
+print(data[0])
 
 
 
