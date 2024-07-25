@@ -1,26 +1,32 @@
 """Climate downscaling applied to TimeGAN
 
-- TimeGAN model developed by Jinsung Yoon
-- Editing the functions from TimeGAN data_loading.py
 
-TimeGAN paper link: https://papers.nips.cc/paper/8789-time-series-generative-adversarial-networks
+Reference: Jinsung Yoon, Daniel Jarrett, Mihaela van der Schaar, 
+"Time-series Generative Adversarial Networks," 
+Neural Information Processing Systems (NeurIPS), 2019.
 
+TimeGAN Paper link: https://papers.nips.cc/paper/8789-time-series-generative-adversarial-networks
+
+
+- Editing the functions found in data_loading.py to work for climate downscaling
 
 -----------------------------
 
 data_loading.py
 
-(0) MinMaxScaler: Custom Min Max normalizer
-(1) sine_data_generation: Generate sine dataset (EDIT THIS FUNCTION LATER)
+(1) MinMaxScaler: Custom Min Max normalizer
 (2) netCDF_data_loading: Load and preprocess climate data (NetCDF file format)
-(3) Example usage
+
+Examples found at end of script
+
 """
 
-## Necessary Packages
+## Import Necessary Packages
 
 import xarray as xr
 import numpy as np
 
+###############################################################
 
 def MinMaxScaler(data):
   """Min Max normalizer.
@@ -36,53 +42,16 @@ def MinMaxScaler(data):
   norm_data = numerator / (denominator + 1e-7)
   return norm_data
 
+###############################################################
 
-
-def sine_data_generation (no, seq_len, dim):
-  """Sine data generation.
-  
-  Args:
-    - no: the number of samples
-    - seq_len: sequence length of the time-series
-    - dim: feature dimensions
-    
-  Returns:
-    - data: generated data
-  """  
-  # Initialize the output
-  data = list()
-
-  # Generate sine data
-  for i in range(no):      
-    # Initialize each time-series
-    temp = list()
-    # For each feature
-    for k in range(dim):
-      # Randomly drawn frequency and phase
-      freq = np.random.uniform(0, 0.1)            
-      phase = np.random.uniform(0, 0.1)
-          
-      # Generate sine signal based on the drawn frequency and phase
-      temp_data = [np.sin(freq * j + phase) for j in range(seq_len)] 
-      temp.append(temp_data)
-        
-    # Align row/column
-    temp = np.transpose(np.asarray(temp))        
-    # Normalize to [0,1]
-    temp = (temp + 1)*0.5
-    # Stack the generated data
-    data.append(temp)
-                
-  return data
-
-
-def netCDF_data_loading(nc_file, var_names, seq_len):
+def netCDF_data_loading(nc_file, var_names, seq_len, dims):
     """Reads NetCDF file and converts to a pandas DataFrame.
     
     Args:
     nc_file (str): Path to the climate data (NetCDF file).
     var_names (list of str): List of variable names to downscale from nc_file.
     seq_len (int): Sequence list.
+    dims (list of str): List of the dimensions from tnc_file.
     
     Returns:
     data (list of np.ndarray): List of preprocessed sequences.
@@ -111,7 +80,7 @@ def netCDF_data_loading(nc_file, var_names, seq_len):
         
         #NOTE: Change the below line depending on the index of your .nc file
         #merged_df = merged_df.merge(df, on=['time', 'lat', 'lon'], how='inner')
-        merged_df = merged_df.merge(df, on = ['x', 'y', 'time'], how = 'inner')
+        merged_df = merged_df.merge(df, on = dims, how = 'inner')
     
         # Normalize the data
     for column in var_names:
@@ -134,7 +103,7 @@ def netCDF_data_loading(nc_file, var_names, seq_len):
     
     return data
 
-
+###############################################################
 
 """Example 1
 
@@ -152,11 +121,12 @@ the dataset we aim to downscale is inconsistent.
 nc_file = '/Users/gabbyvaillant/EDA-MRI-ESM/source_gcm_data/temp_humi_day_MRI-ESM2-0_ssp585_r1i1p1f1_gn_20150101-20151231.nc'
 var_names = ['tas', 'hurs']
 seq_len = 7
+dims = ['time', 'lat', 'lon']
 
-#data = netCDF_data_loading(nc_file, var_names, seq_len)
+data = netCDF_data_loading(nc_file, var_names, seq_len, dims)
 
-#print("Length:")
-#print(len(data))
+print("Length of first example:")
+print(len(data))
 
 #print("First Sequence:")
 #print(data[0])
@@ -173,14 +143,20 @@ NOTE:
 
 """
 
-#Soecifying args for function
+#Specifying args for function
 nc_file2 = '/Users/gabbyvaillant/Downloads/BNL/NAM2019/domnys-nam_218_20191011_0000_000.nc'
 var_names = ['TMP_1000mb', 'RH_1000mb', 'VVEL_1000mb']
 seq_len = 7
+dims = ['x', 'y', 'time']
 
-data = netCDF_data_loading(nc_file2, var_names, seq_len)
-print("First Sequence:")
-print(data[0])
+data = netCDF_data_loading(nc_file2, var_names, seq_len, dims)
+
+print("Length of second example:")
+print(len(data))
+
+###############################################################
+
+
 
 
 
