@@ -17,8 +17,8 @@ This repository contains code developed for climate downscaling research using m
 
 (2) data_loading.py
 
+* Normalizer function used to preprocess data
 * Transform climate data in netCDF format to preprocessed data (normalized and split into squences)
-* Generate Sine data (FIX LATER)
 
 (3) data directory
 
