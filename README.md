@@ -10,23 +10,22 @@ This repository contains code developed for climate downscaling research using m
 (a) netCDF_to_timeseries.ipynb
 * Converted temperature netCDF file to .csv file for only ONE grid location
 * Followed [Youtube tutorial](https://www.youtube.com/watch?v=hrm5RmsVXo0)
-  
-(1) weather-to-GAN.ipynb
-* Trying to input a simple weather data file (.csv format) into the TimeGAN model using ydata-synthetic library
-* Following tutorial used in [ydata-synthetic repository](https://github.com/ydataai/ydata-synthetic/blob/dev/examples/timeseries/TimeGAN_Synthetic_stock_data.ipynb)
 
-(2) data_loading.py
+(1) preprocessing directory
 
-* Normalizer function used to preprocess data
-* Transform climate data in netCDF format to preprocessed data (normalized and split into squences)
+(a) preprocess-NAM
+* Steps taken to preprocess NAM dataset to be consistent with uWRF dataset
 
-(3) data directory
+(b) preprocess-uWRF
+* Steps taken to preprocess uWRF dataset to be consistent with NAM dataset
 
-(a) domnys-nam_218_20191011_0000_0000.nc
-* Example of one NetCDF file that contains our three variables of interest to be downscaled
+(2) timeGAN-funcs
+* Functions updated and edited to use from timeGAN
+
 
   ## Info:
   * Variables of interest:
-    - TMP_1000mb (Temperature at surface level)
-    - RH_1000mb (Relative Humidity at surface level)
-    - VVEL_1000mb (Pressure at surface level)
+    - Temperature 2m above ground (NAM: TMP_2maboveground, uWRF: T2)
+    - U-component of wind (NAM: UGRD_10maboveground, uWRF: U10)
+    - V-component of wind (NAM: VGRD_10maboveground, UWRF: V10)
+    - Surface pressure (NAM: PRES_surface, UWRF: PSFC)
