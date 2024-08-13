@@ -1,7 +1,7 @@
 # **Climate Downscaling** 🌧️
 
 ## Introduction
-This repository contains code developed for climate downscaling research using machine learning techniques. The objective is to utilize the TimeGAN model for downscaling selected climate datasets (GCMs in netCDF file format). The project initially focuses on generating synthetic weather data and aims to implement climate downscaling methodologies within the TimeGAN framework.
+This repository contains code developed for climate downscaling research using machine learning techniques.
 
 ## Code Explanation
 
@@ -25,7 +25,7 @@ This repository contains code developed for climate downscaling research using m
 
   ## Info:
   * Variables of interest:
-    - Temperature 2m above ground (NAM: TMP_2maboveground, uWRF: T2)
-    - U-component of wind (NAM: UGRD_10maboveground, uWRF: U10)
-    - V-component of wind (NAM: VGRD_10maboveground, UWRF: V10)
-    - Surface pressure (NAM: PRES_surface, UWRF: PSFC)
+    - T2: Temperature 2m above ground
+    - U10: U-component of wind
+    - V10: V-component of wind
+    - PSFC: Surface pressure
