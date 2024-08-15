@@ -5,12 +5,6 @@ This repository contains code developed for climate downscaling research using m
 
 ## Code Explanation
 
-(0) data-manip directory
-
-(a) netCDF_to_timeseries.ipynb
-* Converted temperature netCDF file to .csv file for only ONE grid location
-* Followed [Youtube tutorial](https://www.youtube.com/watch?v=hrm5RmsVXo0)
-
 (1) preprocessing directory
 
 (a) preprocess-NAM
