@@ -1,25 +1,19 @@
-# **Climate Downscaling** 🌧️
+# **Deep Learning-Based Downscaling of Low-Resolution Weather Forecast Data for New York City ** 🌧️
 
-## Introduction
-This repository contains code developed for climate downscaling research using machine learning techniques.
+## Overview
+This repository contains the code for applying dl4ds, an open-source deep learning library for climate downscaling, to forecast model outputs. The project focuses on leveraging deep learning to enhance the resolution of weather forecast data, making it actionable and precise for localized areas.
 
-## Code Explanation
+## Data
+High-Resolution Data: Ground truth data for model training is sourced from the urbanized Weather Research and Forecasting (uWRF) model, developed by collaborators at the University at Albany. This dataset provides 3 km resolution and 3-hourly temporal granularity.
 
-(1) preprocessing directory
+Low-Resolution Data: The North American Mesoscale (NAM) model, with a resolution of 12 km and 3-hourly intervals, serves as the input dataset for downscaling.
 
-(a) preprocess-NAM
-* Steps taken to preprocess NAM dataset to be consistent with uWRF dataset
+## Goal
 
-(b) preprocess-uWRF
-* Steps taken to preprocess uWRF dataset to be consistent with NAM dataset
+We apply our deep learning model to transform the coarse-resolution NAM data into high-resolution weather forecasts, specifically tailored for New York City. This effort enables better urban-scale forecasting to support decision-making in areas such as disaster management, transportation, and environmental monitoring.
 
-(2) timeGAN-funcs
-* Functions updated and edited to use from timeGAN
+## Directory Overview
+
+(1) preprocessing
 
 
-  ## Info:
-  * Variables of interest:
-    - T2: Temperature 2m above ground
-    - U10: U-component of wind
-    - V10: V-component of wind
-    - PSFC: Surface pressure
