@@ -14,4 +14,18 @@ We apply our deep learning model to transform the coarse-resolution NAM data int
 
 ## Directory Overview
 
-(1) preprocessing
+(1) PerfectProg-d02.ipynb
+
+Notebook containing supervised model training using a PerfectProg downscaling method.
+
+(2) get-pred.ipynb
+
+Notebook containing the preprocessing functions for datasets with one downscaling variable of interest and an associated predictor variable. These functions were applied to the datasets which were then used in the PerfectProg-d02.ipynb notebook to train the deep learning model.
+
+(3) prep-NAM.ipynb
+
+Basline code for preprocessing functions for NAM data.
+
+(4) prep-uWRF.ipynb
+
+Baseline code for preprocessing functions for uWRF data.
