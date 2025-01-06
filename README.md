@@ -1,4 +1,4 @@
-# **Deep Learning-Based Downscaling of Low-Resolution Weather Forecast Data for New York City ** 🌧️
+# Deep Learning-Based Downscaling of Low-Resolution Weather Forecast Data for New York City 🌧️
 
 ## Overview
 This repository contains the code for applying dl4ds, an open-source deep learning library for climate downscaling, to forecast model outputs. The project focuses on leveraging deep learning to enhance the resolution of weather forecast data, making it actionable and precise for localized areas.
