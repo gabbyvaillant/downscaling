@@ -33,5 +33,5 @@ Baseline code for preprocessing functions for uWRF data.
 
 
 
-# Currently downscaling temperature at 2m with surface pressure as a predictor variable (model takes this as another input). The goal is to downscale a variable such as wind direction, solar irrandiance, wind speed.
+Currently downscaling temperature at 2m with surface pressure as a predictor variable (model takes this as another input). The goal is to downscale a variable such as wind direction, solar irrandiance, wind speed.
 
