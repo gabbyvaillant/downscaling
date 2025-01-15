@@ -1,7 +1,7 @@
 # Deep Learning-Based Downscaling of Low-Resolution Weather Forecast Data for New York City 🌧️
 
 ## Overview
-This repository contains the code for applying dl4ds, an open-source deep learning library for climate downscaling, to forecast model outputs. The project focuses on leveraging deep learning to enhance the resolution of weather forecast data, making it actionable and precise for localized areas.
+This repository hosts the code for utilizing [**dl4ds**](https://github.com/carlos-gg/dl4ds), an open-source deep learning library designed for climate downscaling, to process forecast model outputs. The project aims to employ deep learning techniques to improve the resolution of weather forecast data, enhancing its accuracy and usability for precise locations.
 
 ## Data 📊
 High-Resolution Data: Ground truth data for model training is sourced from the urbanized Weather Research and Forecasting (uWRF) model, developed by collaborators at the University at Albany. This dataset provides 3 km resolution and 3-hourly temporal granularity.
@@ -25,8 +25,4 @@ Contains three different deep learning models.
 
 Contains all preprocessing code needed before inputting data into models.
 
-
-
-
-Currently downscaling temperature at 2m with surface pressure as a predictor variable (model takes this as another input). The goal is to downscale a variable such as wind direction, solar irrandiance, wind speed.
 
