@@ -8,27 +8,22 @@ High-Resolution Data: Ground truth data for model training is sourced from the u
 
 Low-Resolution Data: The North American Mesoscale (NAM) model, with a resolution of 12 km and 3-hourly intervals, serves as the input dataset for downscaling.
 
-## Goal 
+## Goal 🎯
 
-We apply our deep learning model to transform the coarse-resolution NAM data into high-resolution weather forecasts, specifically tailored for New York City. This effort enables better urban-scale forecasting to support decision-making in areas such as disaster management, transportation, and environmental monitoring.
+We apply our deep learning model to transform the coarse-resolution NAM data into high-resolution weather forecasts, specifically tailored for New York City. This effort enables better urban-scale forecasting to support decision-making for energy system planners.
 
-## Directory Overview
+## Directory Overview 📂
+(1) data
 
-(1) PerfectProg-d02.ipynb
+Contains data needed to run models
 
-Notebook containing supervised model training using a PerfectProg downscaling method.
+(2) models
 
-(2) get-pred.ipynb
+Contains three different deep learning models.
 
-Notebook containing the preprocessing functions for datasets with one downscaling variable of interest and an associated predictor variable. These functions were applied to the datasets which were then used in the PerfectProg-d02.ipynb notebook to train the deep learning model.
+(3) prep
 
-(3) prep-NAM.ipynb
-
-Baseline code for preprocessing functions for NAM data.
-
-(4) prep-uWRF.ipynb
-
-Baseline code for preprocessing functions for uWRF data.
+Contains all preprocessing code needed before inputting data into models.
 
 
 
