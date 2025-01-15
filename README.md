@@ -24,8 +24,14 @@ Notebook containing the preprocessing functions for datasets with one downscalin
 
 (3) prep-NAM.ipynb
 
-Basline code for preprocessing functions for NAM data.
+Baseline code for preprocessing functions for NAM data.
 
 (4) prep-uWRF.ipynb
 
 Baseline code for preprocessing functions for uWRF data.
+
+
+
+
+Currently downscaling temperature at 2m with surface pressure as a predictor variable (model takes this as another input). The goal is to downscale a variable such as wind direction, solar irrandiance, wind speed.
+
