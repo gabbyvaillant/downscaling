@@ -10,7 +10,7 @@ Low-Resolution Data: The North American Mesoscale (NAM) model, with a resolution
 
 ## Goal 🎯
 
-We apply our deep learning model to transform the coarse-resolution NAM data into high-resolution weather forecasts, specifically tailored for New York City. This effort enables better urban-scale forecasting to support decision-making for energy system planners.
+We apply our deep learning model to transform the coarse-resolution NAM data into high-resolution weather forecasts, specifically tailored for New York City. This effort provides access to more high resolution data for energy system planning.
 
 ## Directory Overview 📂
 **cleaning**
