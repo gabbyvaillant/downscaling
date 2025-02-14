@@ -12,22 +12,15 @@ Low-Resolution Data: The North American Mesoscale (NAM) model, with a resolution
 
 We apply a deep learning model to transform the coarse-resolution NAM forecasts into high-resolution weather forecasts, specifically tailored for New York City tristate area. At it's current stage, the model only downscales NAM data spatially (12km to 3km). We eventually hope to downscale NAM temporally (3-hourly to hourly). This effort provides access to more high resolution data that can be used for energy system planning.
 
-## Directory Overview 📂
-**cleaning**
+## Setup Instructions
 
-Notebooks used to clean data.
+1. Clone the repository:
+   ```bash
+   git clone [https://github.com/gabbyvaillant/downscaling](https://github.com/gabbyvaillant/downscaling.git)
+   cd downscaling
+   ```
 
-**data**
+2. Create a new virtual enviornment using Python 3.8.18
 
-Contains data for NAM, only.
-
-**models**
-
-Notebooks containing the training code for each model.
-
-**results**
-
-Information about test loss and learning curves.
-
-
-
+ Using Python 3.8.18
+ 
