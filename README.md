@@ -16,11 +16,34 @@ We apply a deep learning model to transform the coarse-resolution NAM forecasts 
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/gabbyvaillant/downscaling](https://github.com/gabbyvaillant/downscaling.git)
+   git clone https://github.com/gabbyvaillant/downscaling.git
+   
    cd downscaling
    ```
 
 2. Create a new virtual enviornment using Python 3.8.18
 
- Using Python 3.8.18
+```
+conda create -n downscaling python=3.8.18
+
+conda activate myenv
+
+#Install necessary libraries for project
+#There may be errors with the dl4ds library bc I had to change the library manually (sklearn was outdated)
+
+pip install -r requirements.txt
+
+```
+
+IF there is an error with installing dl4ds, delete that line from requirements.txt
+cd into the dl4ds directory and do ``` pip install .``` which should correctly install dl4ds into the virtual enviornment.
+Then, try ``` pip install -r requirements.txt  ``` again. 
+
+
+3. Run downscaling model for Temperature on the NYC Tristate area
+
+The notebook for this step is found here: /downscaling/models/T2-Tristate-Model.ipynb
+Open the jupyter notebook and follow the instructions in the notebook to run the model.
+
+
  
