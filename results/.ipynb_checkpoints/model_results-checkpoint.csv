@@ -1,0 +1,3 @@
+Downscaled Variable,Predictor,Test Loss,Backbone,Filters,Blocks,Epochs,Parameters,Upsampling Method,Interpolation Method,Batch Size,Learning Rate,Loss Function,Early Stopping,Training Runtime,Model Path
+T2,NULL,0.60918,resnet,4,8,1,103756,spc,inter_area,60,"(0.001, 0.0001)",mae,False,0:00:28.265746,/home/gvaillant1/downscaling/results/T2-Tristate-Other-Models
+T2,NULL,0.193877,resnet,4,8,1,103756,spc,inter_area,60,"(0.001, 0.0001)",mae,False,0:00:28.431333,/home/gvaillant1/downscaling/results/T2-Tristate-Other-Models
