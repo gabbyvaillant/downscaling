@@ -42,7 +42,7 @@ Then, try ``` pip install -r requirements.txt  ``` again.
 
 3. Run downscaling model for Temperature on the NYC Tristate area
 
-The notebook for this step is found here: /downscaling/models/T2-Tristate-Model.ipynb
+The notebook for this step is found here: /downscaling/training/T2-Tristate-Model.ipynb
 Open the jupyter notebook and follow the instructions in the notebook to run the model.
 
 
