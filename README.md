@@ -35,10 +35,10 @@ conda activate downscaling
 ```bash
 
 pip install jupyter
-pip install array
-pip install dumpy
+pip install xarray
+pip install numpy
 pip install ecubevis 
-pip install spicy
+pip install scipy
 pip install netCDF4
 
 ```
