@@ -14,7 +14,7 @@ We apply a deep learning model to transform the coarse-resolution NAM forecasts 
 
 ## Setup Instructions
 
-1. Clone the repository:
+1. Clone this repository:
    ```bash
    git clone https://github.com/gabbyvaillant/downscaling.git
    
@@ -26,24 +26,57 @@ We apply a deep learning model to transform the coarse-resolution NAM forecasts 
 ```
 conda create -n downscaling python=3.8.18
 
-conda activate myenv
-
-#Install necessary libraries for project
-#There may be errors with the dl4ds library bc I had to change the library manually (sklearn was outdated)
-
-pip install -r requirements.txt
+conda activate downscaling
 
 ```
 
-IF there is an error with installing dl4ds, delete that line from requirements.txt
-cd into the dl4ds directory and do ``` pip install .``` which should correctly install dl4ds into the virtual enviornment.
-Then, try ``` pip install -r requirements.txt  ``` again. 
+3. Install the necessary libraries
 
+```bash
+
+pip install jupyter
+pip install array
+pip install dumpy
+pip install ecubevis 
+pip install spicy
+pip install netCDF4
+
+```
+
+Once those libraries are installed, we must install the deep learning library, dl4ds. We must manually install this library. 
+
+The following repository has an updated version of the dl4ds library:
+
+```bash
+git clone https://github.com/subhrajitjubu/dl4ds.git
+
+#Once the dl4ds repository is cloned, cd into it while still in the virtual enviornment
+cd dl4ds
+
+#This will install the correct version of dl4ds
+pip install .
+```
 
 3. Run downscaling model for Temperature on the NYC Tristate area
 
-The notebook for this step is found here: /downscaling/training/T2-Tristate-Model.ipynb
-Open the jupyter notebook and follow the instructions in the notebook to run the model.
+```bash
+
+cd /downscaling/training
+
+#Open Jupyter
+
+jupyter lab
+```
+
+Once jupyter opens, go to the T2-Tristate-Model.ipynb notebook.
+There you can begin running the cells. The first cell imports the necessary libraries. It will throw an error if we are missing some. Install the missing libraries into the virtual environment using pip
+
+In the following cells, you will have to edit the paths to the data files. There are comments indicating which paths you should change. Once the paths are updated, then the notebook should run.
+
+4. Check results
+
+In the results directory, there is a .csv holding information about the different models that were tested. Here we can compare the loss and the training time.
+
 
 
  
