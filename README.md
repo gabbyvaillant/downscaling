@@ -56,6 +56,13 @@ cd dl4ds
 #This will install the correct version of dl4ds
 pip install .
 ```
+If you get an error mentioning that catopy could not be installed do the following:
+
+```bash
+conda install -c conda-forge cartopy
+
+```
+Then try to reinstall dl4ds again.
 
 3. Run downscaling model for Temperature on the NYC Tristate area
 
