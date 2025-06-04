@@ -3,11 +3,11 @@ import os
 
 def main():
     file_list = [
-        '/D4/data/gvaillant/NAM-aligned/nam_aligned_01_WS.nc',
-        '/D4/data/gvaillant/NAM-aligned/nam_aligned_02_WS.nc',
-        '/D4/data/gvaillant/NAM-aligned/nam_aligned_03_WS.nc',
-        '/D4/data/gvaillant/NAM-aligned/nam_aligned_04_WS.nc',
-        '/D4/data/gvaillant/NAM-aligned/nam_aligned_05_WS.nc',
+    '/D4/data/gvaillant/NAM-cleaned/nam_cleaned_01.nc',
+    '/D4/data/gvaillant/NAM-cleaned/nam_cleaned_02.nc',
+    '/D4/data/gvaillant/NAM-cleaned/nam_cleaned_03.nc',
+    '/D4/data/gvaillant/NAM-cleaned/nam_cleaned_04.nc',
+    '/D4/data/gvaillant/NAM-cleaned/nam_cleaned_05.nc'
     ]
 
     datasets = [xr.open_dataset(file) for file in file_list]
@@ -29,9 +29,9 @@ def main():
     os.makedirs(save_dir, exist_ok=True)
 
     # Save datasets
-    train_ds.to_netcdf(os.path.join(save_dir, 'nam_train_WS.nc'))
-    val_ds.to_netcdf(os.path.join(save_dir, 'nam_val_WS.nc'))
-    test_ds.to_netcdf(os.path.join(save_dir, 'nam_test_WS.nc'))
+    train_ds.to_netcdf(os.path.join(save_dir, 'nam_train.nc'))
+    val_ds.to_netcdf(os.path.join(save_dir, 'nam_val.nc'))
+    test_ds.to_netcdf(os.path.join(save_dir, 'nam_test.nc'))
 
     print("Files saved successfully.")
 

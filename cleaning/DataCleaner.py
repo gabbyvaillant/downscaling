@@ -4,121 +4,120 @@ import xarray as xr
 import numpy as np
 import argparse
 
+# Define dataset-specific variables
+NAM_VARS = [
+    'TMP_2maboveground', 'PRES_surface', 'UGRD_10maboveground', 'VGRD_10maboveground', 
+    'DSWRF_surface', 'HPBL_surface', 'HGT_surface'
+]
+
+uWRF_VARS = [
+    'T2', 'PSFC', 'U10', 'V10', 'SWDOWN', 'PBLH', 'HGT'
+]
+
 class DataLoader:
-    def __init__(self, dir_path, data_name, ds_vars, pred_var=None):
+    def __init__(self, dir_path, data_name):
         self.dir_path = dir_path
         self.data_name = data_name
-        self.ds_vars = ds_vars
-        self.pred_var = pred_var
         self.dataset = None
-    
+
     def load_data(self):
-        if self.pred_var is not None:
-            print(f"Using {self.pred_var} as a predictor variable.")
-        else:
-            print("No predictor variable provided.")
         self.dataset = xr.open_dataset(self.dir_path)
         return self.dataset
 
 class uWRFDataCleaner:
-    def __init__(self, dataset):
+    def __init__(self, dataset, base_vars):
         self.dataset = dataset
+        self.base_vars = base_vars
 
-    def rename_and_filter_vars(self, dataset, ds_vars, pred_var):
-        vars_to_keep = list(ds_vars)
-        if pred_var:
-            vars_to_keep.append(pred_var)
+    def rename_and_filter_vars(self, dataset):
+        vars_to_keep = [var for var in self.base_vars if var in dataset]
         dataset = dataset[vars_to_keep]
         dataset = dataset.rename({'XLAT': 'latitude', 'XLONG': 'longitude', 'XTIME': 'time'})
         return dataset
 
 class NAMDataCleaner:
-    def __init__(self, dataset):
+    def __init__(self, dataset, base_vars):
         self.dataset = dataset
-    
-    def rename_and_filter_vars(self, dataset, ds_vars, pred_var):
+        self.base_vars = base_vars
+        self.rename_map = {
+            'TMP_2maboveground': 'T2',
+            'PRES_surface': 'PSFC',
+            'UGRD_10maboveground': 'U10',
+            'VGRD_10maboveground': 'V10',
+            'DSWRF_surface': 'SWDOWN',
+            'HPBL_surface': 'PBLH',
+            'HGT_surface': 'HGT'
+        }
+
+    def rename_and_filter_vars(self, dataset):
+        # Adjust longitudes to [-180, 180] range
         dataset['longitude'] = (dataset['longitude'] + 180) % 360 - 180
-        vars_to_keep = list(ds_vars)
-        if pred_var:
-            vars_to_keep.append(pred_var)
-        missing_vars = [var for var in vars_to_keep if var not in dataset]
+
+        # Keep only base_vars that are present
+        vars_to_keep = [var for var in self.base_vars if var in dataset]
+        missing_vars = [var for var in self.base_vars if var not in dataset]
         if missing_vars:
             print(f"Skipping dataset: Missing variables {missing_vars}")
             return None
-        return dataset[vars_to_keep]
+
+        dataset = dataset[vars_to_keep]
+
+        # Rename to match uWRF
+        rename_subset = {k: v for k, v in self.rename_map.items() if k in dataset}
+        dataset = dataset.rename(rename_subset)
+
+        return dataset
+
 
 class NAMSpatialCutter:
     def __init__(self, dataset):
-        self.dataset = dataset 
-    
+        self.dataset = dataset
+
     def cut(self, dataset):
-        min_y, max_y = 73146, 524213
-        min_x, max_x = 292584, 719269
-        y = dataset['y'].values
-        x = dataset['x'].values
-        y_indices = np.where((y >= min_y) & (y <= max_y))[0]
-        x_indices = np.where((x >= min_x) & (x <= max_x))[0]
-        dataset_cut = dataset.isel(y=y_indices, x=x_indices)
-        return dataset_cut
+        return dataset.isel(y=slice(1, 41), x=slice(27, 67))
+def run_pipeline(dir_path, data_name):
+    cleaned_data = []
+    base_vars = uWRF_VARS if data_name == "uWRF" else NAM_VARS
 
-def run_pipeline(dir_path, data_name, ds_vars, pred_var=None):
-    cleaned_uWRF_data = []
-    cleaned_NAM_data = []
+    input_files = glob.glob(os.path.join(dir_path, '*'))
+    for file in input_files:
+        print(f"Processing file: {file}")
+        loader = DataLoader(file, data_name)
+        dataset = loader.load_data()
 
-    if data_name == "uWRF":
-        input_files = glob.glob(os.path.join(dir_path, '*'))
-        for file in input_files:
-            print(f"Processing file: {file}")
-            loader = DataLoader(file, data_name, ds_vars, pred_var)
-            dataset = loader.load_data()
-            cleaner = uWRFDataCleaner(dataset)
-            dataset = cleaner.rename_and_filter_vars(dataset, ds_vars, pred_var)
-            cleaned_uWRF_data.append(dataset)
-        
-        final_dataset = xr.concat(cleaned_uWRF_data, dim='Time').sortby('Time')
-        output_dir = '/D4/data/gvaillant/uwrf-cleaned'
-        month = os.path.basename(os.path.normpath(dir_path))
-        var_name = "WS" if set(ds_vars) == {"UGRD_10maboveground", "VGRD_10maboveground"} else "_".join(ds_vars)
-        output_file = os.path.join(output_dir, f"uwrf_cleaned_{month}_{var_name}.nc")
-        final_dataset.to_netcdf(output_file)
-        print(f"Saved cleaned uWRF dataset to: {output_file}")
-
-    elif data_name == "NAM":
-        input_files = glob.glob(os.path.join(dir_path, '*'))
-        for file in input_files:
-            print(f"Processing file: {file}")
-            loader = DataLoader(file, data_name, ds_vars, pred_var)
-            dataset = loader.load_data()
-            if dataset is None:
-                continue
-            cleaner = NAMDataCleaner(dataset)
+        if data_name == "uWRF":
+            cleaner = uWRFDataCleaner(dataset, base_vars)
+            dataset = cleaner.rename_and_filter_vars(dataset)
+        elif data_name == "NAM":
+            cleaner = NAMDataCleaner(dataset, base_vars)
             cutter = NAMSpatialCutter(dataset)
-            dataset = cleaner.rename_and_filter_vars(dataset, ds_vars, pred_var)
-            if dataset is not None:
-                cleaned_NAM_data.append(dataset)
-
-        if cleaned_NAM_data:
-            final_dataset = xr.concat(cleaned_NAM_data, dim='time').sortby('time')
-            final_dataset = cutter.cut(final_dataset)
-            output_dir = '/D4/data/gvaillant/NAM-cleaned'
-            month = os.path.basename(os.path.normpath(dir_path))
-            var_name = "WS" if set(ds_vars) == {"UGRD_10maboveground", "VGRD_10maboveground"} else "_".join(ds_vars)
-            output_file = os.path.join(output_dir, f"nam_cleaned_{month}_{var_name}.nc")
-            final_dataset.to_netcdf(output_file)
-            print(f"Saved cleaned NAM dataset to: {output_file}")
+            dataset = cleaner.rename_and_filter_vars(dataset)
         else:
-            print("No valid datasets found. Skipping concatenation.")
+            raise ValueError("Invalid dataset name. Use 'uWRF' or 'NAM'.")
+
+        if dataset is not None:
+            if data_name == "NAM":
+                dataset = cutter.cut(dataset)
+            cleaned_data.append(dataset)
+
+    if cleaned_data:
+        concat_dim = 'Time' if data_name == 'uWRF' else 'time'
+        final_dataset = xr.concat(cleaned_data, dim=concat_dim).sortby(concat_dim)
+        output_dir = f"/D4/data/gvaillant/{data_name}-cleaned"
+        os.makedirs(output_dir, exist_ok=True)
+        month = os.path.basename(os.path.normpath(dir_path))
+        output_file = os.path.join(output_dir, f"{data_name.lower()}_cleaned_{month}.nc")
+        final_dataset.to_netcdf(output_file)
+        print(f"Saved cleaned {data_name} dataset to: {output_file}")
     else:
-        raise ValueError("Invalid data name specified. Either uWRF or NAM.")
+        print("No valid datasets found. Skipping concatenation.")
 
 def main():
     parser = argparse.ArgumentParser(description="Run the data cleaning pipeline for uWRF or NAM data.")
     parser.add_argument("dir_path", type=str, help="Path to the directory containing input NetCDF files.")
     parser.add_argument("data_name", type=str, choices=["uWRF", "NAM"], help="Dataset name (uWRF or NAM).")
-    parser.add_argument("ds_vars", nargs='+', type=str, help="Variable(s) to downscale.")
-    parser.add_argument("--pred_var", type=str, default=None, help="Optional predictor variable.")
     args = parser.parse_args()
-    run_pipeline(args.dir_path, args.data_name, args.ds_vars, args.pred_var)
+    run_pipeline(args.dir_path, args.data_name)
 
 if __name__ == "__main__":
     main()

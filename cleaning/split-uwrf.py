@@ -3,11 +3,11 @@ import os
 
 def main():
     file_list = [
-        '/D4/data/gvaillant/uwrf-cleaned/WS/uwrf_cleaned_01_U10_V10.nc',
-        '/D4/data/gvaillant/uwrf-cleaned/WS/uwrf_cleaned_02_U10_V10.nc',
-        '/D4/data/gvaillant/uwrf-cleaned/WS/uwrf_cleaned_03_U10_V10.nc',
-        '/D4/data/gvaillant/uwrf-cleaned/WS/uwrf_cleaned_04_U10_V10.nc',
-        '/D4/data/gvaillant/uwrf-cleaned/WS/uwrf_cleaned_05_U10_V10.nc',
+        '/D4/data/gvaillant/uWRF-cleaned/uwrf_cleaned_01.nc',
+        '/D4/data/gvaillant/uWRF-cleaned/uwrf_cleaned_02.nc',
+        '/D4/data/gvaillant/uWRF-cleaned/uwrf_cleaned_03.nc',
+        '/D4/data/gvaillant/uWRF-cleaned/uwrf_cleaned_04.nc',
+        '/D4/data/gvaillant/uWRF-cleaned/uwrf_cleaned_05.nc',
     ]
 
     fixed_files = []
@@ -38,9 +38,9 @@ def main():
     os.makedirs(save_dir, exist_ok=True)
 
     # Save datasets
-    train_ds.to_netcdf(os.path.join(save_dir, 'uwrf_train_WS.nc'))
-    val_ds.to_netcdf(os.path.join(save_dir, 'uwrf_val_WS.nc'))
-    test_ds.to_netcdf(os.path.join(save_dir, 'uwrf_test_WS.nc'))
+    train_ds.to_netcdf(os.path.join(save_dir, 'uwrf_train.nc'))
+    val_ds.to_netcdf(os.path.join(save_dir, 'uwrf_val.nc'))
+    test_ds.to_netcdf(os.path.join(save_dir, 'uwrf_test.nc'))
 
     print("Files saved successfully.")
 
