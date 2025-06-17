@@ -3,3 +3,8 @@ PSFC,T2,0.062483,resnet,8,8,77,684823,spc,inter_area,60,"(0.001, 0.0001)",mae,Tr
 PSFC,T2,0.052771,densenet,8,8,77,983640,spc,inter_area,60,"(0.001, 0.0001)",mae,True,2:00:13.603920,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,CPU
 PSFC,WS,0.053021,resnet,8,8,77,684823,spc,inter_area,60,"(0.001, 0.0001)",mae,True,1:49:39.138758,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,CPU
 PSFC,WS,0.05479,densenet,8,8,77,983640,spc,inter_area,60,"(0.001, 0.0001)",mae,True,1:42:06.594054,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,CPU
+PSFC,T2,0.06919,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,3:00:41.728415,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,CPU
+PSFC,T2,0.050369,densenet,8,8,77,983640,spc,inter_area,128,"(0.001, 0.0001)",mae,True,3:42:51.418773,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Best-Model,True,CPU
+PSFC,T2,0.056649,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,2:06:08.405138,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,CPU
+PSFC,T2,0.055952,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,1:53:47.399027,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,CPU
+PSFC,T2,0.061486,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,1:48:26.251305,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,CPU

@@ -1,16 +1,25 @@
+
+![Downscaling Results][visuals/new-t2.png]
+
 # Deep Learning-Based Downscaling of Low-Resolution Weather Forecast Data for New York City 🌧️
 
 ## Overview
+
 Welcome to the downscaling repository! This repository uses [**dl4ds**](https://github.com/carlos-gg/dl4ds), an open-source deep learning library designed for climate downscaling, to process forecast model outputs. Our goal is to use deep learning techniques to improve the spatial and temporal resolution of weather forecast data, enhancing its accuracy and usability.
 
+## UPDATES (as of June 2025)
+
+Originally, this repository used the supervised CNN model from [**dl4ds**](https://github.com/carlos-gg/dl4ds) and applied it to our weather forecast datasets for downscaling. DL4DS uses an older version of Python (3.7) and Tensorflow which causes many obstacles so now we have now translated the dl4ds code into the most recent version of PyTorch instead of the outdated version of Tensorflow. The translated code can now be found in the torch_dl4ds directory. The setup instructions explained here are still referring to the old version of the library. Updated setup instructions will be uploaded soon.
+
 ## Data 📊
+
 High-Resolution Data: Ground truth data for model training is sourced from the urbanized Weather Research and Forecasting (uWRF) model, developed by collaborators at the University at Albany. This dataset provides 3 km resolution and 3-hourly temporal granularity.
 
 Low-Resolution Data: The North American Mesoscale (NAM) model, with a resolution of 12 km and 3-hourly intervals, serves as the input dataset for downscaling.
 
 ## Goal 🎯
 
-We apply a deep learning model to transform the coarse-resolution NAM forecasts into high-resolution weather forecasts, specifically tailored for New York City tristate area. At it's current stage, the model only downscales NAM data spatially (12km to 3km). We eventually hope to downscale NAM temporally (3-hourly to hourly). This effort provides access to more high resolution data that can be used for energy system planning.
+We apply a deep learning model to transform the coarse-resolution NAM forecasts into high-resolution weather forecasts, specifically tailored for New York City tristate area. At it's current stage, the model only downscales NAM data spatially (12km to 3km). We eventually hope to downscale NAM temporally (3-hourly to hourly). This effort provides access to more high resolution data that can be used for energy system planning. 
 
 ## Setup Instructions
 
@@ -43,7 +52,7 @@ pip install netCDF4
 
 ```
 
-Once those libraries are installed, we must install the deep learning library, dl4ds. We must manually install this library. 
+Once those libraries are installed, we must install the deep learning library, dl4ds. We must manually install this library.
 
 The following repository has an updated version of the dl4ds library:
 
@@ -55,13 +64,15 @@ cd dl4ds
 
 #This will install the correct version of dl4ds
 pip install .
+
 ```
-If you get an error mentioning that catopy could not be installed do the following:
+If you get an error mentioning that cartopy could not be installed do the following:
 
 ```bash
 conda install -c conda-forge cartopy
 
 ```
+
 Then try to reinstall dl4ds again.
 
 3. Run downscaling model for Temperature on the NYC Tristate area
@@ -84,6 +95,3 @@ In the following cells, you will have to edit the paths to the data files. There
 
 In the results directory, there is a .csv holding information about the different models that were tested. Here we can compare the loss and the training time.
 
-
-
- 
