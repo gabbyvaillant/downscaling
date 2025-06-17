@@ -1,5 +1,5 @@
 import torch
-from pt_postups import PostUpsamplingNet
+from .pt_postups import PostUpsamplingNet
 
 # Dummy input settings
 batch_size = 2

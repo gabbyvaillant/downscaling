@@ -11,8 +11,7 @@ import xarray as xr
 import numpy as np
 import torch as pt
 from abc import ABC, abstractmethod
-#from matplotlib.pyplot import show, close
-#import logging
+
 
 class TorchTrainer(ABC):
     """

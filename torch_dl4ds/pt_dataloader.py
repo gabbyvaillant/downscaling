@@ -6,7 +6,9 @@ import xarray as xr
 import ecubevis as ecv
 from torch.utils.data import Dataset
 
-from . import POSTUPSAMPLING_METHODS
+from .config import (
+    POSTUPSAMPLING_METHODS
+)
 from .pt_utils import crop_array, resize_array, checkarray_ndim
 
 def create_pair_hr_lr(

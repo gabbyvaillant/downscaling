@@ -4,3 +4,4 @@ WS,PSFC,0.100278,densenet,8,8,77,983640,spc,inter_area,60,"(0.001, 0.0001)",mae,
 WS,T2,0.111947,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,2:34:39.147742,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Other-Models,True,CPU
 WS,PBLH,0.107579,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,4:08:05.356385,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Other-Models,True,CPU
 WS,WD,0.110642,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,2:22:20.798608,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Other-Models,True,CPU
+WS,WD,0.104318,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,3:31:53.568191,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Other-Models,True,CPU

@@ -6,8 +6,8 @@ import xarray as xr
 import torch as pt
 import torch.nn as nn
 
-from pt_utils import Timing, checkarray_ndim, resize_array, spatiotemporal_to_spatial_samples
-from pt_dataloader import create_batch_hr_lr
+from .pt_utils import Timing, checkarray_ndim, resize_array, spatiotemporal_to_spatial_samples
+from .pt_dataloader import create_batch_hr_lr
 
 
 class Predictor:

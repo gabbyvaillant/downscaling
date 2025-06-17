@@ -1,10 +1,10 @@
 import torch as pt
 import torch.nn as nn
-from pt_blocks import (
+from .pt_blocks import (
     ResidualBlock, ConvBlock, DenseBlock, TransitionBlock, SubpixelConvolutionBlock,
     LocalizedConvBlock, get_dropout_layer
 )
-from pt_utils import (checkarg_backbone, checkarg_upsampling, 
+from .pt_utils import (checkarg_backbone, checkarg_upsampling, 
                     checkarg_dropout_variant)
 
 # In PyTorch, every model is a class that must inherit from nn.Module

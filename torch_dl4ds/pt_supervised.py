@@ -9,10 +9,11 @@ import torch.nn as nn
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from pt_base import TorchTrainer
-from pt_utils import Timing
-#from .. import POSTUPSAMPLING_METHODS
-#from ..pt_models import net_postupsampling
+from .pt_base import TorchTrainer
+from .pt_utils import Timing
+from .config import (
+    POSTUPSAMPLING_METHODS
+)
 
 class TorchSupervisedTrainer(TorchTrainer):
     """
@@ -73,7 +74,6 @@ class TorchSupervisedTrainer(TorchTrainer):
         scale=scale,
         device=device,
         verbose=verbose,
-        model_list=model_list,
         save=save,
         save_path=save_path,
         show_plot=show_plot

@@ -1,5 +1,5 @@
 import torch as pt
-from pt_utils import checkarg_dropout_variant
+from .pt_utils import checkarg_dropout_variant
 import torch.nn as nn
 import torch.nn.functional as F
 

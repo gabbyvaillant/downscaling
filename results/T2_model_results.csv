@@ -11,3 +11,4 @@ T2,WS,0.083377,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,Tru
 T2,PSFC,0.08097,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,2:18:46.513159,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,CPU
 T2,WS,0.079349,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,2:01:31.367599,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,CPU
 T2,PSFC,0.079813,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,2:01:37.449520,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,CPU
+T2,WS,0.091594,resnet,8,8,77,684823,spc,inter_area,128,"(0.001, 0.0001)",mae,True,2:05:22.656077,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,CPU

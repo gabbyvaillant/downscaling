@@ -6,20 +6,21 @@ import torch as pt
 import torch.nn as nn
 import numpy as np
 from scipy.ndimage import zoom
-
 import matplotlib.pyplot as plt
 import math
 import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-#from . import BACKBONE_BLOCKS, DROPOUT_VARIANTS, LOSS_FUNCTIONS, UPSAMPLING_METHODS, INTERPOLATION_METHODS
-#from . import losses
+from .config import (
+    BACKBONE_BLOCKS,
+    DROPOUT_VARIANTS,
+    LOSS_FUNCTIONS,
+    UPSAMPLING_METHODS,
+    INTERPOLATION_METHODS
+)
 
-#add the rest
-UPSAMPLING_METHODS = ['spc']
-BACKBONE_BLOCKS = ['resnet', 'densenet']
-DROPOUT_VARIANTS = ['spatial' 'mcdrop', 'mcspatialdrop', 'vanilla', 'gaussian']
+
 
 
 
