@@ -7,6 +7,10 @@ import os
 import xarray as xr
 import torch.nn as nn
 import torch
+import numpy as np
+import time
+import datetime
+from tqdm import tqdm
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from .pt_base import TorchTrainer
@@ -14,10 +18,11 @@ from .pt_utils import Timing
 from .config import (
     POSTUPSAMPLING_METHODS
 )
+from .pt_postups import net_postupsampling
+from .pt_dataloader import DataGenerator
+
 
 class TorchSupervisedTrainer(TorchTrainer):
-    """
-    """
     def __init__(
             self,
             backbone,
@@ -25,17 +30,12 @@ class TorchSupervisedTrainer(TorchTrainer):
             data_train,
             data_val,
             data_test,
-            data_train_lr=None,
-            data_val_lr=None,
-            data_test_lr=None,
             predictors_train=None,
             predictors_val=None,
             predictors_test=None,
-            static_vars=None,
             scale=5,
             interpolation='inter_area',
-            patch_size=None,
-            batch_size=64,
+            batch_size=32,
             loss='mae',
             epochs=60,
             steps_per_epoch=None,
@@ -52,8 +52,6 @@ class TorchSupervisedTrainer(TorchTrainer):
             save=False,
             save_path=None,
             save_bestmodel=False,
-            trained_model=None,
-            trained_epochs=0,
             verbose=True,
             **architecture_params
     ):
@@ -67,10 +65,8 @@ class TorchSupervisedTrainer(TorchTrainer):
         backbone=backbone,
         upsampling=upsampling,
         data_train=data_train,
-        data_train_lr=data_train_lr,
         loss=loss,
         batch_size=batch_size,
-        patch_size=patch_size,
         scale=scale,
         device=device,
         verbose=verbose,
@@ -78,10 +74,10 @@ class TorchSupervisedTrainer(TorchTrainer):
         save_path=save_path,
         show_plot=show_plot
         )
+
+        self.backbone = backbone
         self.data_val = data_val
         self.data_test = data_test
-        self.data_val_lr = data_val_lr
-        self.data_test_lr = data_test_lr
         self.predictors_train = predictors_train
         if self.predictors_train is not None and not isinstance(self.predictors_train, list):
             raise TypeError('`predictors_train` must be a list of ndarrays')
@@ -91,13 +87,9 @@ class TorchSupervisedTrainer(TorchTrainer):
         self.predictors_val = predictors_val
         if self.predictors_val is not None and not isinstance(self.predictors_val, list):
             raise TypeError('`predictors_val` must be a list of ndarrays')
-        self.static_vars = static_vars 
-        if self.static_vars is not None:
-            for i in range(len(self.static_vars)):
-                if isinstance(self.static_vars[i], xr.DataArray):
-                    self.static_vars[i] = self.static_vars[i].values
         self.interpolation = interpolation 
         self.epochs = epochs
+        self.upsampling = upsampling
         self.steps_per_epoch = steps_per_epoch
         self.validation_steps = validation_steps
         self.test_steps = test_steps
@@ -108,50 +100,34 @@ class TorchSupervisedTrainer(TorchTrainer):
         self.min_delta = min_delta
         self.show_plot = show_plot
         self.architecture_params = architecture_params
-        self.trained_model = trained_model
-        self.trained_epochs = trained_epochs
         self.save_bestmodel = save_bestmodel
 
 
     def setup_model(self):
         """
         Setting up the model
+        Omitted the static variable code
         """
-        #I'm omitting any spatiotemporal stuff
-        n_channels = self.data_train.shape[-1]
-        n_aux_channels = 0
-        if self.static_vars is not None:
-            n_channels += len(self.static_vars)
-            n_aux_channels = len(self.static_vars)
+        n_channels = self.data_train.shape[1] # should be 1
         if self.predictors_train is not None:
-            n_channels += len(self.predictors_train)
+            n_channels += len(self.predictors_train) #should be 2
 
-        if self.patch_size is None:
-            lr_height = int(self.data_train.shape[1] / self.scale)
-            lr_width = int(self.data_train.shape[2] / self.scale)
-            hr_height = int(self.data_train.shape[1])
-            hr_width = int(self.data_train.shape[2])
+        lr_height = int(self.data_train.shape[-2] / self.scale) #NAM: 40
+        lr_width = int(self.data_train.shape[-1] / self.scale) #NAM: 40
+        hr_height = int(self.data_train.shape[-2])  #uWFRF: 120
+        hr_width = int(self.data_train.shape[-1]) #uWRF: 120
 
-        else:
-            lr_height = lr_width = int(self.patch_size / self.scale)
-            hr_height = hr_width = int(self.patch_size)
 
         ### Instantiating the model
+        self.model = net_postupsampling(
+            backbone_block=self.backbone,
+            upsampling=self.upsampling,
+            scale=self.scale,
+            lr_size=(lr_height, lr_width), # 40 by 40
+            n_channels=n_channels, #2
+            **self.architecture_params)
 
-        if self.trained_model is None:
-            if self.upsampling in POSTUPSAMPLING_METHODS:
-                self.model = net_postupsampling(
-                    backbone_block=self.backbone,
-                    upsampling=self.upsampling,
-                    scale=self.scale,
-                    lr_size=(lr_height, lr_width),
-                    n_channels=n_channels,
-                    n_aux_channels=n_aux_channels,
-                    **self.architecture_params)
-        else:
-            self.model = self.trained_model
-            print('Loading pre-trained model')
-
+        
     def run(self):
         """
         Compiling, training and saving the model
@@ -159,45 +135,76 @@ class TorchSupervisedTrainer(TorchTrainer):
         self.timing = Timing(self.verbose)
         self.setup_model()
 
-        self.model.to(self.device)
-        self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate[0])
-        self.criterion = nn.L1Loss() if self.loss == 'mae' else nn.MSELoss()
+        start_time = time.time()
 
-        #Need to implement the DataLoader class next?
-        train_loader = DataLoader(self.ds_train, batch_size=self.batch_size, shuffle=True)
-        val_loader = DataLoader(self.ds_val, batch_size=self.batch_size)
+        self.model.to(self.device)
+        self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
+        self.criterion = nn.L1Loss() if self.loss == 'mae' else nn.MSELoss()
+        train_losses = []
+        val_losses = []
+
+        train_loader = DataLoader(
+            DataGenerator(
+                array=self.data_train,
+                predictors=self.predictors_train,
+                backbone=self.backbone,
+                upsampling=self.upsampling,
+                scale=self.scale
+                ),
+                batch_size=self.batch_size,
+                drop_last=False,
+                shuffle=True)
+
+        val_loader = DataLoader(
+            DataGenerator(
+                array=self.data_val,
+                predictors=self.predictors_val,
+                backbone=self.backbone,
+                upsampling=self.upsampling,
+                scale=self.scale
+                ),
+                batch_size=self.batch_size)
 
         best_val_loss = float('inf')
         patience_counter = 0
 
-        for epoch in range(self.trained_epochs, self.epochs):
+        for epoch in range(0, self.epochs):
             self.model.train()
             total_train_loss = 0
-            for batch in train_loader:
+            for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{self.epochs} [Training]", leave=False):
+                # x = low resolution input, y = high resolution target
                 x, y = batch
                 x, y = x.to(self.device), y.to(self.device)
 
                 self.optimizer.zero_grad()
+
                 y_pred = self.model(x)
                 loss = self.criterion(y_pred, y)
                 loss.backward()
                 self.optimizer.step()
                 total_train_loss += loss.item()
 
-            self.model.eval() #idk 
+            self.model.eval()
             total_val_loss = 0
+
             with torch.no_grad():
-                for batch in val_loader:
+                for batch in tqdm(val_loader, desc=f"Epoch {epoch+1}/{self.epochs} [Validation]", leave=False):
                     x, y = batch
                     x, y = x.to(self.device), y.to(self.device)
                     y_pred = self.model(x)
                     loss = self.criterion(y_pred, y)
                     total_val_loss += loss.item()
             
+            avg_train_loss = total_train_loss / len(train_loader)
+            avg_val_loss = total_val_loss / len(val_loader)
+
+            train_losses.append(avg_train_loss)
+            val_losses.append(avg_val_loss)
+
             if self.verbose:
                 print(f"Epoch {epoch+1}/{self.epochs}, "
-                      f"Train Loss: {total_train_loss:.4f}, "
-                      f"Val Loss: {total_val_loss:.4f}")
+                      f"Train Loss: {avg_train_loss:.4f}, "
+                      f"Val Loss: {avg_val_loss:.4f}")
             
             #Early stopping logic
             if self.early_stopping:
@@ -211,12 +218,14 @@ class TorchSupervisedTrainer(TorchTrainer):
                     if patience_counter >= self.patience:
                         print("Early stopping triggered.")
                         break
+
+        self.val_loss = float(val_losses[-1]) if val_losses else float('inf')
+        self.training_runtime = str(datetime.timedelta(seconds=int(time.time() - start_time)))
         self.timing.runtime()
 
         if self.save:
+            np.savetxt(os.path.join(self.save_path, "train_loss_curve.txt"), train_losses)
+            np.savetxt(os.path.join(self.save_path, "val_loss_curve.txt"), val_losses)
+            print(f"[Saved] Loss curves to {self.save_path}")
             os.makedirs(self.save_path, exist_ok=True)
             torch.save(self.model.state_dict(), os.path.join(self.save_path, "final_model.pt"))
-
-
-    
-

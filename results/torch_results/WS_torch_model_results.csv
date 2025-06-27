@@ -1,0 +1,6 @@
+Downscaled Variable,Predictor,Test Loss,Backbone,Filters,Blocks,Epochs,Parameters,Upsampling Method,Interpolation Method,Batch Size,Learning Rate,Loss Function,Early Stopping,Training Runtime,Model Path,Conv Block,Device
+WS,WD,0.2497,resnet,4,2,1,1061760,spc,inter_area,32,0.001,mae,True,0:00:41,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Best-Model,True,cpu
+WS,PSFC,0.3287,resnet,4,2,1,1061760,spc,inter_area,32,0.001,mae,True,0:00:41,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Other-Models,True,cpu
+WS,T2,0.3162,resnet,4,2,1,1061760,spc,inter_area,32,0.001,mae,True,0:00:43,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Other-Models,True,cpu
+WS,PBLH,0.244,resnet,4,2,1,1061760,spc,inter_area,32,0.001,mae,True,0:00:40,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Best-Model,True,cpu
+WS,SWDOWN,0.4012,resnet,4,2,1,1061760,spc,inter_area,32,0.001,mae,True,0:00:41,/home/gvaillant1/downscaling/pretrained-models/WS/WS-Other-Models,True,cpu

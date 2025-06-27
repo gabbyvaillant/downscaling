@@ -7,8 +7,6 @@ from .pt_blocks import (
 from .pt_utils import (checkarg_backbone, checkarg_upsampling, 
                     checkarg_dropout_variant)
 
-# In PyTorch, every model is a class that must inherit from nn.Module
-
 
 class PostUpsamplingNet(nn.Module):
     def __init__(
@@ -17,7 +15,6 @@ class PostUpsamplingNet(nn.Module):
             upsampling,
             scale,
             n_channels,
-            n_aux_channels,
             lr_size,
             n_channels_out=1,
             n_filters=8,
@@ -31,9 +28,6 @@ class PostUpsamplingNet(nn.Module):
             rc_interpolation='bilinear',
             localcon_layer=False
     ):
-        #Call the parent class's __init__() method
-        #The class inherits nn.Module so i need to make sure
-        #the internal stuff that nn.Module sets up gets initialized properly
         super().__init__()
 
         self.backbone_block = checkarg_backbone(backbone_block)
@@ -42,7 +36,6 @@ class PostUpsamplingNet(nn.Module):
 
         self.scale= scale
         self.localcon_layer = localcon_layer
-        self.auxvar_array_is_given = n_aux_channels > 0
         self.activation = activation
         self.output_activation = output_activation
 
@@ -65,7 +58,7 @@ class PostUpsamplingNet(nn.Module):
             if backbone_block == 'resnet':
                 blocks.append(ResidualBlock(
                     filters=out_channels,
-                    in_channels=in_channels,  # <-- FIXED
+                    in_channels=in_channels,
                     activation=activation,
                     dropout_rate=dropout_rate,
                     dropout_variant=dropout_variant,
@@ -86,14 +79,19 @@ class PostUpsamplingNet(nn.Module):
                 blocks.append(TransitionBlock(out_channels // 2))
                 out_channels = out_channels // 2  # update for next block
 
+        #print(blocks)
         self.backbone = nn.Sequential(*blocks)
-
+        #print(self.backbone)
 
         #Upsampling
         if upsampling == 'spc':
-            self.upsample = SubpixelConvolutionBlock(scale, n_filters=out_channels, in_channels=out_channels)
+            self.upsample = SubpixelConvolutionBlock(
+                scale,
+                n_filters=out_channels,
+                in_channels=out_channels
+                )
             
-        #Local conv 
+        #Local conv
         if localcon_layer:
             self.localconv = LocalizedConvBlock(
                 in_channels=out_channels,
@@ -104,26 +102,12 @@ class PostUpsamplingNet(nn.Module):
                 normalization=normalization,
                 use_bias=True
                 )
-        
-        #Aux input path
-        if self.auxvar_array_is_given:
-            self.aux_processor = ConvBlock(
-                in_channels=n_aux_channels,
-                filters=out_channels,
-                activation=activation,
-                dropout_rate=0,
-                normalization=normalization,
-                attention=False
-            )
 
         # Final Layers
         # Start with upsampled output
         transition_in_channels = out_channels
 
         if localcon_layer:
-            transition_in_channels += out_channels
-
-        if self.auxvar_array_is_given:
             transition_in_channels += out_channels
 
         self.transition_last = TransitionBlock(
@@ -166,10 +150,6 @@ class PostUpsamplingNet(nn.Module):
             lws = self.localconv(x)
             x = pt.cat([x, lws], dim=1)
 
-        if self.auxvar_array_is_given and s_in is not None:
-            s = self.aux_processor(s_in)
-            x = pt.cat([x, s], dim=1)
-
         x = self.transition_last(x)
         x = self.final_block1(x)
         x = self.final_block2(x)
@@ -178,7 +158,3 @@ class PostUpsamplingNet(nn.Module):
 
 def net_postupsampling(*args, **kwargs):
     return PostUpsamplingNet(*args, **kwargs)
-
-
-
-

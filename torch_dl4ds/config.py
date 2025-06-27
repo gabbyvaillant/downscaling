@@ -22,6 +22,7 @@ LOSS_FUNCTIONS = [
 DROPOUT_VARIANTS = [
     'vanilla',
     'gaussian',
+    'spatial',
     'spatialdrop',
     'mcgaussiandrop',
     'mcspatialdrop'

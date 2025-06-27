@@ -41,12 +41,16 @@ class TorchMinMaxScaler:
         return torch.tensor(X, dtype=torch.float32)
 
     def inverse_transform(self, X):
-        X = X.detach().cpu().numpy()
+
+        # Convert to NumPy only if it's a torch tensor
+        if isinstance(X, torch.Tensor):
+            X = X.cpu().numpy()
 
         if X.ndim == 0:
             X = np.expand_dims(X, axis=0)
 
         return (X - self.min_) / self.scale_
+
 
 
 class TorchStandardScaler:
@@ -90,17 +94,21 @@ class TorchStandardScaler:
         if X.ndim == 0:
             X = np.expand_dims(X, axis=0)
 
-        return torch.tensor(X, dtype=torch.float32)
+        return X
+        #torch.tensor(X, dtype=torch.float32)
 
     def inverse_transform(self, X):
-        X = X.detach().cpu().numpy()
+        # Convert torch tensor to NumPy only if needed
+        if isinstance(X, torch.Tensor):
+            X = X.cpu().numpy()
 
         if X.ndim == 0:
             X = np.expand_dims(X, axis=0)
 
         if self.with_std:
-            X *= self.std_
+            X = X * self.std_
         if self.with_mean:
-            X += self.mean_
+            X = X + self.mean_
 
         return X
+
