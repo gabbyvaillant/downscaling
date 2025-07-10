@@ -14,10 +14,11 @@ from tqdm import tqdm
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from .pt_base import TorchTrainer
-from .pt_utils import Timing
+from .pt_utils import (Timing, plot_history)
 from .config import (
     POSTUPSAMPLING_METHODS
 )
+import matplotlib.pyplot as plt
 from .pt_postups import net_postupsampling
 from .pt_dataloader import DataGenerator
 
@@ -143,6 +144,11 @@ class TorchSupervisedTrainer(TorchTrainer):
         train_losses = []
         val_losses = []
 
+        self.history = {
+            'train_loss': [],
+            'val_loss': []
+        }
+
         train_loader = DataLoader(
             DataGenerator(
                 array=self.data_train,
@@ -198,6 +204,10 @@ class TorchSupervisedTrainer(TorchTrainer):
             avg_train_loss = total_train_loss / len(train_loader)
             avg_val_loss = total_val_loss / len(val_loader)
 
+            self.history['train_loss'].append(avg_train_loss)
+            self.history['val_loss'].append(avg_val_loss)
+
+
             train_losses.append(avg_train_loss)
             val_losses.append(avg_val_loss)
 
@@ -224,8 +234,17 @@ class TorchSupervisedTrainer(TorchTrainer):
         self.timing.runtime()
 
         if self.save:
-            np.savetxt(os.path.join(self.save_path, "train_loss_curve.txt"), train_losses)
-            np.savetxt(os.path.join(self.save_path, "val_loss_curve.txt"), val_losses)
-            print(f"[Saved] Loss curves to {self.save_path}")
+            #print(f"[Saved] Loss curves to {self.save_path}")
             os.makedirs(self.save_path, exist_ok=True)
             torch.save(self.model.state_dict(), os.path.join(self.save_path, "final_model.pt"))
+        
+        if self.show_plot:
+            # Build full path: save_path directory + fixed name
+            learning_curve_path = os.path.join(self.save_path, "learning_curve.png")
+            plot_history(
+                self.history, 
+                title=f"{self.backbone} Training History",
+                log_scale=False,
+                save_path=learning_curve_path
+            )
+            

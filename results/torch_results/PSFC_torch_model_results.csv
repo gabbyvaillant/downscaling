@@ -1,1 +1,5 @@
 Downscaled Variable,Predictor,Test Loss,Backbone,Filters,Blocks,Epochs,Parameters,Upsampling Method,Interpolation Method,Batch Size,Learning Rate,Loss Function,Early Stopping,Training Runtime,Model Path,Conv Block,Device
+PSFC,T2,0.0226,resnet,8,8,50,61585149,spc,inter_area,32,0.001,mae,True,3:55:55,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Best-Model,True,cpu
+PSFC,T2,0.0813,resnet,4,4,2,4016836,spc,inter_area,32,0.001,mae,True,0:05:08,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,cpu
+PSFC,SWDOWN,0.1068,resnet,4,4,2,4016836,spc,inter_area,32,0.001,mae,True,0:05:20,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,cpu
+PSFC,WS,0.1261,resnet,4,4,2,4016836,spc,inter_area,32,0.001,mae,True,0:05:12,/home/gvaillant1/downscaling/pretrained-models/PSFC/PSFC-Other-Models,True,cpu

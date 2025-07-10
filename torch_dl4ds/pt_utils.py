@@ -11,6 +11,7 @@ import math
 import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+import torch.nn.functional as F
 
 from .config import (
     BACKBONE_BLOCKS,
@@ -86,6 +87,60 @@ def checkarg_dropout_variant(dropout_variant):
         else:
             return dropout_variant 
 
+##########################################################################################
+def new_resize_array(array, newsize, squeezed=True):
+    """
+    Resize a 2D, 3D, or 4D array using PyTorch F.interpolate with area mode.
+    Expects newsize = (W, H).
+
+    Parameters
+    ----------
+    array : np.ndarray
+    newsize : tuple (W, H)
+    squeezed : bool
+
+    Returns
+    -------
+    np.ndarray
+    """
+    # Ensure contiguous for torch conversion
+    array = np.ascontiguousarray(array)
+
+    # Determine input shape and reshape for PyTorch
+    if array.ndim == 2:
+        # (H, W)
+        tensor = pt.tensor(array).unsqueeze(0).unsqueeze(0)  # (N=1, C=1, H, W)
+    elif array.ndim == 3:
+        # (C, H, W)
+        tensor = pt.tensor(array).unsqueeze(0)  # (N=1, C, H, W)
+    elif array.ndim == 4:
+        # (T, C, H, W) --> treat T as batch dim
+        tensor = pt.tensor(array)
+    else:
+        raise ValueError(f"Unsupported array shape: {array.shape}")
+
+    # New size: (H, W)
+    new_height = newsize[1]
+    new_width = newsize[0]
+
+    # Apply area-based downsampling
+    resized = F.interpolate(
+        tensor.float(),  # Ensure float
+        size=(new_height, new_width),
+        mode='area'
+    )
+
+    resized_np = resized.numpy()
+
+    if array.ndim == 2:
+        resized_np = resized_np.squeeze(axis=0).squeeze(axis=0)  # (H, W)
+    elif array.ndim == 3 and resized_np.shape[0] == 1:
+        resized_np = resized_np.squeeze(axis=0)  # (C, H, W)
+    # For ndim==4, no squeeze — treat T as batch
+    
+    return np.squeeze(resized_np) if squeezed else resized_np
+
+#######################################################################################
 
 def resize_array(array, newsize, squeezed=True):
     """
@@ -135,3 +190,27 @@ class Timing:
             print(f"Total runtime: {hours}h {minutes}m {seconds}s")
         return elapsed
 
+def plot_history(history, title=None, log_scale=False, save_path=None):
+    fig, ax = plt.subplots(figsize=(8, 5), dpi=200)
+    ax.plot(history['train_loss'], label='Train Loss')
+    ax.plot(history['val_loss'], label='Validation Loss')
+
+    if log_scale:
+        ax.set_yscale('log')
+
+    ax.set_xlabel('Epoch')
+    ax.set_ylabel('Loss')
+    ax.set_title(title or 'Training History')
+    ax.grid(True)
+    ax.legend()
+
+    if save_path:
+        # Make sure the parent directory exists
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        fig.savefig(save_path, bbox_inches='tight')
+        print(f"Plot saved to: {save_path}")
+
+    plt.show()
+    plt.close(fig)
+
+    return fig, ax

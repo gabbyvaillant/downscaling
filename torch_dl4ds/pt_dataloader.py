@@ -9,7 +9,62 @@ from torch.utils.data import Dataset
 from .config import (
     POSTUPSAMPLING_METHODS
 )
-from .pt_utils import resize_array, checkarray_ndim
+from .pt_utils import resize_array, checkarray_ndim, new_resize_array
+
+
+def new_create_pair_hr_lr(
+    array,
+    upsampling,
+    scale,
+    predictors=None,
+    debug=False,
+    interpolation='inter_area'):
+
+    hr_array = array
+
+    hr_y, hr_x = hr_array.shape[1:] #120, 120
+
+    lr_y, lr_x = int(hr_y / scale), int(hr_x / scale) #40, 40
+
+    if predictors is not None:
+        if predictors is None or predictors.size == 0:
+            raise ValueError(f"[Predictors Error] predictors is None or empty. shape={getattr(predictors, 'shape', 'unknown')}")
+        if predictors.shape[1] != lr_y or predictors.shape[2] != lr_x:
+            lr_array_predictors = new_resize_array(predictors, (lr_x, lr_y), squeezed=False)
+            #print(f"predictors resized: {lr_array_predictors.shape}")
+        else:
+            lr_array_predictors = predictors
+
+        # COARSENING HR ARRAY TO THE LR 
+        lr_array = new_resize_array(hr_array, (lr_x, lr_y), squeezed=False)
+        
+        # Check dimensions
+        hr_array = checkarray_ndim(hr_array, 3, -1)
+        lr_array = checkarray_ndim(lr_array, 3, -1)
+        lr_array_predictors = checkarray_ndim(lr_array_predictors, 3, -1)
+
+        if predictors.shape[-1] == 0:
+            raise ValueError("Your predictor array has no channels. This will cause model failure.")
+
+        lr_array = np.concatenate([lr_array, lr_array_predictors], axis=0)
+
+        if lr_array.shape[-1] == 0:
+            raise ValueError(f"[Invalid input] lr_array has zero channels after concatenation")
+
+    else:
+        print(f"Calling new_resize_array on shape {hr_array.shape} with newsize = ({lr_x}, {lr_y})")
+        lr_array = new_resize_array(hr_array, (lr_x, lr_y), squeezed=False)
+
+        # Check dimensions
+        hr_array = checkarray_ndim(hr_array, 3, -1)
+        lr_array = checkarray_ndim(lr_array, 3, -1)
+
+    hr_array = np.asarray(hr_array, dtype=np.float32)
+    lr_array = np.asarray(lr_array, dtype=np.float32)
+
+    #print(f'HR array: {hr_array.shape}, LR array: {lr_array.shape}')
+
+    return (hr_array, lr_array)
 
 def create_pair_hr_lr(
     array,
@@ -179,7 +234,10 @@ class DataGenerator(Dataset):
         data_i = self.array[i]
         predictors_i = None if self.predictors is None else self.predictors[i]
 
-        hr_array, lr_array = create_pair_hr_lr(
+        #print(f"data before create pair: {data_i.shape}")
+        #print(f"predictor data before create pair: {predictors_i.shape}")
+
+        hr_array, lr_array = new_create_pair_hr_lr(
             array=data_i,
             upsampling=self.upsampling,
             scale=self.scale,
@@ -187,7 +245,11 @@ class DataGenerator(Dataset):
             predictors=predictors_i
         )
 
+
         hr_tensor = pt.from_numpy(hr_array).float()
         lr_tensor = pt.from_numpy(lr_array).float()
+        #print(f"hr_tensor: {hr_tensor.shape}")
+        #print(f"lr_tensor: {lr_tensor.shape}")
 
         return lr_tensor, hr_tensor # (input, target)
+        #return lr_array, hr_array

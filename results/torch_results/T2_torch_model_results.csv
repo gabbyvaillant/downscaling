@@ -8,3 +8,9 @@ T2,PSFC,0.2256,resnet,4,4,1,4016836,spc,inter_area,32,0.001,mae,True,0:01:22,/ho
 T2,WS,0.485,resnet,4,4,1,4016836,spc,inter_area,32,0.001,mae,True,0:01:11,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
 T2,WD,0.931,resnet,4,4,1,4016836,spc,inter_area,32,0.001,mae,True,0:01:20,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
 T2,SWDOWN,0.7089,resnet,4,4,1,4016836,spc,inter_area,32,0.001,mae,True,0:01:15,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
+T2,PSFC,0.0534,resnet,8,8,75,61585149,spc,inter_area,32,0.001,mae,True,2:07:55,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
+T2,PSFC,0.0587,resnet,4,4,25,4016836,spc,inter_area,32,0.001,mae,True,0:30:56,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
+T2,WS,0.065,resnet,4,4,25,4016836,spc,inter_area,32,0.001,mae,True,0:30:44,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
+T2,WD,0.0719,resnet,4,4,25,4016836,spc,inter_area,32,0.001,mae,True,0:30:29,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
+T2,SWDOWN,0.0784,resnet,4,4,25,4016836,spc,inter_area,32,0.001,mae,True,0:28:44,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
+T2,PSFC,0.064,resnet,8,8,25,1643517,spc,inter_area,32,0.001,mae,True,0:34:25,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,False,cpu
