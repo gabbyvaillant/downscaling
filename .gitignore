@@ -10,3 +10,4 @@ __pycache__/
 *.pb
 
 *.pth
+pretrained-models/
