@@ -3,3 +3,4 @@ SWDOWN,PSFC,0.1665,resnet,4,4,2,4016836,spc,inter_area,32,0.001,mae,True,0:05:34
 SWDOWN,T2,0.2377,resnet,4,4,2,4016836,spc,inter_area,32,0.001,mae,True,0:05:14,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Other-Models,True,cpu
 SWDOWN,PSFC,0.6501,resnet,4,4,1,4016836,spc,inter_area,32,0.001,mae,True,0:02:51,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Other-Models,True,cpu
 SWDOWN,PSFC,0.0979,resnet,4,4,3,4016836,spc,inter_area,32,0.001,mae,True,0:09:08,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Best-Model,True,cpu
+SWDOWN,PSFC,0.0609,resnet,8,8,25,61585149,spc,inter_area,32,0.001,mae,True,5:01:02,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Best-Model,True,cpu
