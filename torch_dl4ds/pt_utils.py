@@ -1,6 +1,5 @@
 import os
 import time
-import xarray as xr
 from datetime import datetime
 import torch as pt
 import torch.nn as nn
@@ -9,9 +8,17 @@ from scipy.ndimage import zoom
 import matplotlib.pyplot as plt
 import math
 import pandas as pd
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
 import torch.nn.functional as F
+
+from pynvml import (
+    nvmlInit,
+    nvmlDeviceGetHandleByIndex,
+    nvmlDeviceGetMemoryInfo,
+    nvmlDeviceGetUtilizationRates,
+    nvmlDeviceGetTemperature,
+    NVML_TEMPERATURE_GPU,
+    nvmlDeviceGetPowerUsage
+)
 
 from .config import (
     BACKBONE_BLOCKS,
@@ -214,3 +221,90 @@ def plot_history(history, title=None, log_scale=False, save_path=None):
     plt.close(fig)
 
     return fig, ax
+
+class GPUMetricsLogger:
+    def __init__(self, device_index=0, model=None):
+        nvmlInit() #Need to call before any other pynvml functions
+        self.handle = nvmlDeviceGetHandleByIndex(device_index) #reference to the GPU we are monitoring
+        self.logs = [] #where we store the GPU usage logs
+        self.start_time = time.time()
+        self.model = model
+        self.model_size = self.count_params(model) if model is not None else None
+    
+    def count_params(self, model):
+        total = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        return total
+
+    def log(self, label=None):
+
+        elapsed_time = time.time() - self.start_time # seconds since training started
+        mem_info = nvmlDeviceGetMemoryInfo(self.handle)
+        util = nvmlDeviceGetUtilizationRates(self.handle)
+        temp = nvmlDeviceGetTemperature(self.handle, NVML_TEMPERATURE_GPU)
+        power = nvmlDeviceGetPowerUsage(self.handle) / 1000 # W
+        
+        self.logs.append({
+            'time_elapsed_sec' : elapsed_time,
+            'memory_used_GiB': mem_info.used / (1024 ** 3),
+            'gpu_utilization_percent': util.gpu,
+            'temperature_C': temp,
+            'power_usage_W': power,
+            'label': label
+        })
+    
+    def to_dataframe(self):
+        return pd.DataFrame(self.logs)
+
+    
+    def save_and_plot(self, save_path=None):
+        df = self.to_dataframe()
+
+        if self.model_size is not None:
+            model_label = f"{self.model_size} params"
+        else:
+            model_label = "gpu_metrics"
+
+        if save_path:
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            csv_path = os.path.join(save_path, "gpu_metrics.csv")
+            df.to_csv(csv_path, index=False)
+            print(f"Saved GPU metrics to {csv_path}")
+
+        # Create 4 subplots
+        fig, axes = plt.subplots(2, 2, figsize=(16, 8), dpi=150) #dpi = high-quality resolution
+        fig.suptitle(f"GPU Metrics Over Time - Model: {model_label}", fontsize=16)
+
+        # Memory
+        axes[0, 0].plot(df['time_elapsed_sec'], df['memory_used_GiB'], color='skyblue')
+        axes[0, 0].set_title("Memory Used (GiB)")
+        axes[0, 0].set_ylabel("GiB")
+        axes[0, 0].grid(True) # huh
+
+        # GPU Utilization
+        axes[0, 1].plot(df['time_elapsed_sec'], df['gpu_utilization_percent'], color='salmon')
+        axes[0, 1].set_title("GPU Utilization (%)")
+        axes[0, 1].set_ylabel("%")
+        axes[0, 1].grid(True)
+
+        # Temperature
+        axes[1, 0].plot(df['time_elapsed_sec'], df['temperature_C'], color='orange')
+        axes[1, 0].set_title("GPU Temperature (°C)")
+        axes[1, 0].set_ylabel("°C")
+        axes[1, 0].grid(True)
+
+        # Power Usage
+        axes[1, 1].plot(df['time_elapsed_sec'], df['power_usage_W'], color='green')
+        axes[1, 1].set_title("Power Usage (W)")
+        axes[1, 1].set_ylabel("Watts")
+        axes[1, 1].grid(True)
+
+        for ax in axes.flat:
+            ax.set_xlabel("Seconds Since Start")
+
+        plt.tight_layout(rect=[0, 0, 1, 0.96])
+
+        if save_path:
+            plot_path = os.path.join(save_path, "gpu_metrics_plot.png")
+            plt.savefig(plot_path)
+            print(f"Saved GPU plot to {plot_path}")
+        plt.show()

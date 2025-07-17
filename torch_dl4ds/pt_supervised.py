@@ -14,7 +14,7 @@ from tqdm import tqdm
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from .pt_base import TorchTrainer
-from .pt_utils import (Timing, plot_history)
+from .pt_utils import (Timing, plot_history, GPUMetricsLogger)
 from .config import (
     POSTUPSAMPLING_METHODS
 )
@@ -105,11 +105,10 @@ class TorchSupervisedTrainer(TorchTrainer):
 
 
     def setup_model(self):
-        """
-        Setting up the model
-        Omitted the static variable code
-        """
+
         n_channels = self.data_train.shape[1] # should be 1
+        print('runnning with updates')
+        
         if self.predictors_train is not None:
             n_channels += len(self.predictors_train) #should be 2
 
@@ -135,6 +134,13 @@ class TorchSupervisedTrainer(TorchTrainer):
         """
         self.timing = Timing(self.verbose)
         self.setup_model()
+
+        self.model.to(self.device)
+
+        if self.device == 'cuda':
+            self.gpu_logger = GPUMetricsLogger(model=self.model)
+        else:
+            self.gpu_logger = None
 
         start_time = time.time()
 
@@ -174,10 +180,12 @@ class TorchSupervisedTrainer(TorchTrainer):
         best_val_loss = float('inf')
         patience_counter = 0
 
+        log_every = 10  # log every 10 batches
+
         for epoch in range(0, self.epochs):
             self.model.train()
             total_train_loss = 0
-            for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{self.epochs} [Training]", leave=False):
+            for i, batch in enumerate(tqdm(train_loader, desc=f"Epoch {epoch+1}/{self.epochs} [Training]", leave=False)):
                 # x = low resolution input, y = high resolution target
                 x, y = batch
                 x, y = x.to(self.device), y.to(self.device)
@@ -189,6 +197,10 @@ class TorchSupervisedTrainer(TorchTrainer):
                 loss.backward()
                 self.optimizer.step()
                 total_train_loss += loss.item()
+
+                # Log GPU stats
+                if self.gpu_logger and i % log_every == 0:
+                    self.gpu_logger.log(label=f"epoch{epoch+1}_batch{i}")
 
             self.model.eval()
             total_val_loss = 0
@@ -247,4 +259,8 @@ class TorchSupervisedTrainer(TorchTrainer):
                 log_scale=False,
                 save_path=learning_curve_path
             )
+
+
+        if self.gpu_logger and self.save_path:
+            self.gpu_logger.save_and_plot(save_path=self.save_path)
             
