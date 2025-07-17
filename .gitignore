@@ -11,3 +11,4 @@ __pycache__/
 
 *.pth
 pretrained-models/
+make-predictions/frames/
