@@ -14,10 +14,7 @@ from pynvml import (
     nvmlInit,
     nvmlDeviceGetHandleByIndex,
     nvmlDeviceGetMemoryInfo,
-    nvmlDeviceGetUtilizationRates,
-    nvmlDeviceGetTemperature,
-    NVML_TEMPERATURE_GPU,
-    nvmlDeviceGetPowerUsage
+    nvmlDeviceGetUtilizationRates
 )
 
 from .config import (
@@ -236,21 +233,17 @@ class GPUMetricsLogger:
         return total
 
     def log(self, label=None):
-
-        elapsed_time = time.time() - self.start_time # seconds since training started
+        elapsed_time = time.time() - self.start_time
         mem_info = nvmlDeviceGetMemoryInfo(self.handle)
         util = nvmlDeviceGetUtilizationRates(self.handle)
-        temp = nvmlDeviceGetTemperature(self.handle, NVML_TEMPERATURE_GPU)
-        power = nvmlDeviceGetPowerUsage(self.handle) / 1000 # W
-        
+    
         self.logs.append({
-            'time_elapsed_sec' : elapsed_time,
+            'time_elapsed_sec': elapsed_time,
             'memory_used_GiB': mem_info.used / (1024 ** 3),
             'gpu_utilization_percent': util.gpu,
-            'temperature_C': temp,
-            'power_usage_W': power,
             'label': label
         })
+
     
     def to_dataframe(self):
         return pd.DataFrame(self.logs)
@@ -265,46 +258,51 @@ class GPUMetricsLogger:
             model_label = "gpu_metrics"
 
         if save_path:
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)
-            csv_path = os.path.join(save_path, "gpu_metrics.csv")
+            os.makedirs(save_path, exist_ok=True)
+            csv_path = os.path.join(save_path, f"gpu_metrics_{self.model_size // 100000}M_params.csv")
             df.to_csv(csv_path, index=False)
             print(f"Saved GPU metrics to {csv_path}")
 
-        # Create 4 subplots
-        fig, axes = plt.subplots(2, 2, figsize=(16, 8), dpi=150) #dpi = high-quality resolution
+        fig, axes = plt.subplots(1, 3, figsize=(18, 5), dpi=150)
         fig.suptitle(f"GPU Metrics Over Time - Model: {model_label}", fontsize=16)
-
+        
         # Memory
-        axes[0, 0].plot(df['time_elapsed_sec'], df['memory_used_GiB'], color='skyblue')
-        axes[0, 0].set_title("Memory Used (GiB)")
-        axes[0, 0].set_ylabel("GiB")
-        axes[0, 0].grid(True) # huh
+        axes[0].plot(df['time_elapsed_sec'], df['memory_used_GiB'], color='skyblue')
+        axes[0].set_title("Memory Used (GiB)")
+        axes[0].set_ylabel("GiB")
+        axes[0].set_ylim(0, 4) # bc this VM has 4GB available
+        axes[0].grid(True)
+        
+        # Utilization
+        axes[1].plot(df['time_elapsed_sec'], df['gpu_utilization_percent'], color='salmon')
+        axes[1].set_title("GPU Utilization (%)")
+        axes[1].set_ylabel("%")
+        axes[1].set_ylim(0, 100)
+        axes[1].grid(True)
 
-        # GPU Utilization
-        axes[0, 1].plot(df['time_elapsed_sec'], df['gpu_utilization_percent'], color='salmon')
-        axes[0, 1].set_title("GPU Utilization (%)")
-        axes[0, 1].set_ylabel("%")
-        axes[0, 1].grid(True)
-
-        # Temperature
-        axes[1, 0].plot(df['time_elapsed_sec'], df['temperature_C'], color='orange')
-        axes[1, 0].set_title("GPU Temperature (°C)")
-        axes[1, 0].set_ylabel("°C")
-        axes[1, 0].grid(True)
-
-        # Power Usage
-        axes[1, 1].plot(df['time_elapsed_sec'], df['power_usage_W'], color='green')
-        axes[1, 1].set_title("Power Usage (W)")
-        axes[1, 1].set_ylabel("Watts")
-        axes[1, 1].grid(True)
+        # Third panel: Model Info
+        axes[2].axis('off')  # hide axis
+        
+        info_text = f"""
+        Batch Size: {self.model.batch_size if hasattr(self.model, 'batch_size') else 'N/A'}
+        Parameters: {self.model_size // 1_000_000}M params
+        Filters: {arch_params.get('n_filters', 'N/A')}
+        Blocks: {arch_params.get('n_blocks', 'N/A')}
+        Backbone: {self.model.__class__.__name__}
+        Upsampling: {getattr(self.model, 'upsampling', 'N/A')}
+        Device: {pt.cuda.get_device_name(0) if pt.cuda.is_available() else 'CPU'}
+        """
+        
+        axes[2].text(0.05, 0.95, info_text.strip(), va='top', ha='left', fontsize=12, family='monospace')
+        axes[2].set_title("Model Info")
 
         for ax in axes.flat:
-            ax.set_xlabel("Seconds Since Start")
+            ax.set_xlabel("Time (sec)")
 
         plt.tight_layout(rect=[0, 0, 1, 0.96])
 
         if save_path:
-            plot_path = os.path.join(save_path, "gpu_metrics_plot.png")
+            plot_path = os.path.join(save_path, f"gpu_metrics_plot_{self.model_size // 1_000_000}M_params.png")
             plt.savefig(plot_path)
             print(f"Saved GPU plot to {plot_path}")
         plt.show()

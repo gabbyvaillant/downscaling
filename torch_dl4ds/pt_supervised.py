@@ -102,6 +102,14 @@ class TorchSupervisedTrainer(TorchTrainer):
         self.show_plot = show_plot
         self.architecture_params = architecture_params
         self.save_bestmodel = save_bestmodel
+        
+        #self.filters = architecture_params.get("n_filters")
+        #self.blocks = architecture_params.get("n_blocks")
+
+        self.batch_size = self.batch_size
+        self.upsampling = self.upsampling
+        self.n_blocks = self.architecture_params.get("n_blocks")
+        self.n_filters = self.architecture_params.get("n_filters")
 
 
     def setup_model(self):
@@ -137,14 +145,13 @@ class TorchSupervisedTrainer(TorchTrainer):
 
         self.model.to(self.device)
 
-        if self.device == 'cuda':
+        if 'cuda' in str(self.device).lower() and torch.cuda.is_available():
             self.gpu_logger = GPUMetricsLogger(model=self.model)
         else:
             self.gpu_logger = None
 
         start_time = time.time()
 
-        self.model.to(self.device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
         self.criterion = nn.L1Loss() if self.loss == 'mae' else nn.MSELoss()
         train_losses = []
@@ -180,7 +187,7 @@ class TorchSupervisedTrainer(TorchTrainer):
         best_val_loss = float('inf')
         patience_counter = 0
 
-        log_every = 10  # log every 10 batches
+        log_every = 1  # log every 10 batches
 
         for epoch in range(0, self.epochs):
             self.model.train()
@@ -260,7 +267,9 @@ class TorchSupervisedTrainer(TorchTrainer):
                 save_path=learning_curve_path
             )
 
-
-        if self.gpu_logger and self.save_path:
-            self.gpu_logger.save_and_plot(save_path=self.save_path)
-            
+        if self.gpu_logger:
+            print(f"GPU logger active: {len(self.gpu_logger.logs)} entries")
+            self.gpu_logger.save_and_plot(save_path='C:/Users/gvaillant1/BNL/downscaling/gpu-metrics/')
+            print("Saved GPU metrics to gpu-metrics/")
+        else:
+            print("GPU logger was not initialized.")
