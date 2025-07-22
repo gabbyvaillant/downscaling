@@ -115,10 +115,9 @@ class TorchSupervisedTrainer(TorchTrainer):
     def setup_model(self):
 
         n_channels = self.data_train.shape[1] # should be 1
-        print('runnning with updates')
         
         if self.predictors_train is not None:
-            n_channels += len(self.predictors_train) #should be 2
+            n_channels += sum(p.shape[1] for p in self.predictors_train) #Now code works for any num of predictors
 
         lr_height = int(self.data_train.shape[-2] / self.scale) #NAM: 40
         lr_width = int(self.data_train.shape[-1] / self.scale) #NAM: 40
