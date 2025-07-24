@@ -111,7 +111,7 @@ class PostUpsamplingNet(nn.Module):
             transition_in_channels += out_channels
 
         self.transition_last = TransitionBlock(
-            filters=transition_in_channels,
+            in_channels=transition_in_channels, #WAS filters
             activation=activation,
             normalization=normalization
         )

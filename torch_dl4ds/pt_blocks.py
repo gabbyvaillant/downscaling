@@ -312,34 +312,52 @@ class DenseBlock(ConvBlock):
         return pt.cat([x, out], dim=1)
     
 class TransitionBlock(nn.Module):
-    def __init__(self, filters, activation='relu', normalization=None):
+    """
+    TransitionBlock:
+
+    Conv2D (1x1) -> Normalization (optional) -> Activation (optional)
+    """
+    def __init__(self, in_channels, out_channels=None, activation='relu', normalization=None):
         super().__init__()
 
-        layers = []
-        layers.append(nn.Conv2d(filters, filters, kernel_size=1))
+        if out_channels is None:
+            out_channels = in_channels
+
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=1, padding=0, bias=(normalization is None))
+        self.normalization = normalization
+
+        # Always define norm
         if normalization == 'bn':
-            layers.append(nn.BatchNorm2d(filters))
+            self.norm = nn.BatchNorm2d(out_channels)
+        elif normalization == 'ln':
+            self.norm = nn.LayerNorm([out_channels, 1, 1])
+        elif normalization is None:
+            self.norm = None
+        else:
+            raise ValueError(f"Unsupported normalization: {normalization}")
 
-
-        if hasattr(F, activation):
-            self.activation_fn = getattr(F, activation)
-        elif activation is None:
+        if activation is None:
             self.activation_fn = None
+        elif hasattr(F, activation):
+            self.activation_fn = getattr(F, activation)
         else:
             raise ValueError(f"Unsupported activation: {activation}")
 
-        layers.append(nn.Conv2d(filters, filters, kernel_size=1))
-
-        self.model = nn.Sequential(*layers)
 
     def forward(self, x):
-        #print(f"Transition input shape: {x.shape}")
-        out = self.model(x)
-        #print(f"After self.model: {None if out is None else out.shape}")
-        if self.activation_fn:
-            out = self.activation_fn(out)
-        #print(f"After activation_fn: {None if out is None else out.shape}")
-        return out
+        x = self.conv(x)
+
+        if self.norm is not None:
+            if self.normalization == 'ln':
+                b, c, h, w = x.shape
+                x = self.norm(x.view(b, c, -1)).view(b, c, h, w)
+            else:
+                x = self.norm(x)
+        
+        if self.activation_fn is not None:
+            x = self.activation_fn(x)
+
+        return x
 
 
 
@@ -410,9 +428,9 @@ class LocalizedConvBlock(nn.Module):
         name_suffix=''
     ):
         super().__init__()
-        self.transition = TransitionBlock(filters=filters, activation=activation, normalization=normalization)
+        self.transition = TransitionBlock(in_channels=filters,  activation=activation, normalization=normalization)
         self.localconv = LocallyConnected2D_1x1(
-            in_channels=filters,
+            in_channels=in_channels,
             out_channels=filters,
             height=height,
             width=width,
@@ -421,9 +439,9 @@ class LocalizedConvBlock(nn.Module):
         self.activation_fn = getattr(F, activation) if activation else None
     
     def forward(self, x):
-        #print(f"[LocalizedConvBlock] before transition: {x.shape}")
+
         x = self.transition(x)
-        #print(f"[LocalizedConvBlock] after transition: {x.shape}")
+
         x = self.localconv(x)
         if self.activation_fn:
             x = self.activation_fn(x)
