@@ -21,3 +21,4 @@ T2,PSFC+U10+V10+SWDOWN+PBLH,0.0886,resnet,8,8,5,61585437,spc,inter_area,32,0.001
 T2,PSFC+U10+V10+SWDOWN+PBLH,0.0678,resnet,4,4,25,4016980,spc,inter_area,32,0.001,mae,True,0:37:08,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
 T2,PSFC,0.1136,resnet,8,8,100,61585149,spc,inter_area,32,0.001,mae,True,3:07:21,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
 T2,PSFC+U10+V10+SWDOWN+PBLH,0.1343,resnet,6,6,50,19692006,spc,inter_area,32,0.001,mae,True,1:08:50,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
+T2,PSFC+U10+V10+SWDOWN+PBLH,0.0798,resnet,8,8,50,61564765,spc,inter_area,32,0.001,mae,True,5:46:33,/home/gvaillant1/downscaling/pretrained-models/T2/T2-Other-Models,True,cpu
