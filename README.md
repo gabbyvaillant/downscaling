@@ -106,6 +106,12 @@ In the results directory, there is a .csv holding information about the differen
 
 ## Data 📊
 
-High-Resolution Data: Ground truth data for model training is sourced from the urbanized Weather Research and Forecasting (uWRF) model, developed by collaborators at the University at Albany. This dataset provides 3 km resolution and 3-hourly temporal granularity.
+**High-resolution Data: Urban Weather Research & Forecasting Model (uWRF)**
 
-Low-Resolution Data: The North American Mesoscale (NAM) model, with a resolution of 12 km and 3-hourly intervals, serves as the input dataset for downscaling
+uWRF output data is provided from collaborators at the University at Albany. This dataset provides 3 km resolution and 3-hourly temporal granularity.
+
+**Low-Resolution Data: The North American Mesoscale (NAM) model**
+
+Publically available data from NOAA: [**Order NAM Data Here](https://www.ncei.noaa.gov/has/HAS.FileAppRouter?datasetname=NAM218&subqueryby=STATION&applname=&outdest=FILE)
+
+Resolution of 12 km and 3-hourly intervals, serves as the input dataset for downscaling
