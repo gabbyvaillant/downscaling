@@ -106,12 +106,14 @@ In the results directory, there is a .csv holding information about the differen
 
 ## Data 📊
 
-**High-resolution Data: Urban Weather Research & Forecasting Model (uWRF)**
+##  **High-resolution Data: Urban Weather Research & Forecasting Model (uWRF)**
 
-uWRF output data is provided from collaborators at the University at Albany. This dataset provides 3 km resolution and 3-hourly temporal granularity.
+Accessibility: Provided from collaborators at the University at Albany.
 
-**Low-Resolution Data: The North American Mesoscale (NAM) model**
+Resolution:  3km x 3km at 3-hourly temporal granularity.
 
-Publically available data from NOAA: [**Order NAM Data Here](https://www.ncei.noaa.gov/has/HAS.FileAppRouter?datasetname=NAM218&subqueryby=STATION&applname=&outdest=FILE)
+## **Low-Resolution Data: The North American Mesoscale (NAM) model**
 
-Resolution of 12 km and 3-hourly intervals, serves as the input dataset for downscaling
+Accessibility: [**Order NAM Forecast Data Here**](https://www.ncei.noaa.gov/has/HAS.FileAppRouter?datasetname=NAM218&subqueryby=STATION&applname=&outdest=FILE)
+
+Resolution:  12km x 12km 3-hourly temporal granularity.
