@@ -4,40 +4,60 @@
 
 ## Overview
 
-Welcome to the downscaling repository! This repository uses an updated PyTorch version of the [**dl4ds**](https://github.com/carlos-gg/dl4ds) library. dl4ds is an open-source deep learning library designed for  downscaling climate datasets. Our specific goal is to use machine learning improve the spatial and temporal resolution of weather forecast data to enhance its accuracy and usability. 
+Welcome!
+
+ This repository deploys an updated PyTorch version of the [**dl4ds**](https://github.com/carlos-gg/dl4ds) library. dl4ds is an open-source deep learning library designed for downscaling climate datasets. My goal is to use machine learning methods to improve the spatial resolution of weather forecast data to enhance its accuracy and usability for energy system planners. The resulting high resolution forecast data is used by colleagues in the renewable energy group to predict energy demand, renewable generation and outages.
 
 
 ## Directory Overview
 
 
-(1) cleaning
-Contains code for cleaning both low-resolution (NAM output) and high-resolution (uWRF output) data.
+(1) **analysis**
 
-(2) dl4ds
-A forked version of the original DL4DS library.
+Exploratory data analysis to understand weather forecast variables, identify patterns and examine relationships in the datasets.
 
-(3) make-predictions
-Code for generating predictions on unseen data.
+(2) **cleaning**
 
-(4) pretrained-models
-Saved downscaling models.
+Cleaning both low-resolution (NAM) and high-resolution (uWRF) data and splitting into training, testing and validation sets.
 
-(5) results 
-CSV files storing model metadata, tested hyperparameters, and their associated performance metrics.
+(3) **make-predictions**
 
-(6) torch_dl4ds
-PyTorch implementation of the DL4DS library.
+Making predictions/downscaling unseen LR data (NAM).
 
-(7) training
+(4) **pretrained-models**
+
+Pre-trained downscaling models.
+
+(5) **results**
+ 
+CSV files storing model metadata, tested hyperparameters, and their associated performance metrics (MAE).
+
+(6) **torch_dl4ds.egg-info**
+
+Ignore. Used for library development.
+
+(7) **torch_dl4ds**
+
+PyTorch implementation of the DL4DS library. Added GPU tracking and reorganized transition block.
+
+(8) **training**
+
 Notebooks and scripts for training the downscaling models. Each notebook focuses on a specific variable.
 
-(8)
+(9) **visuals**
+
 Visualizations of downscaled results.
 
-(9) requirements.txt
+(10, 11) **.gitattributes & .gitignore**
+
+Ignore
+
+(12) **requirements.txt**
+
 Lists the required Python libraries to set up the virtual environment for torch_dl4ds.
 
-(10) setup.py
+(13) **setup.py**
+
 Setup script for packaging and installing the library.
 
 ## Goal 🎯
