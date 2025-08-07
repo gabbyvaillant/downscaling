@@ -1,6 +1,6 @@
 ![Downscaling Results](visuals/new-t2.png)
 
-# Machine Learning-Based Downscaling of Low-Resolution Weather Forecast Data for New York City 🌧️
+# ML-Based Downscaling of Low-Resolution Weather Forecasts over New York City 🌧️
 
 ## Overview
 

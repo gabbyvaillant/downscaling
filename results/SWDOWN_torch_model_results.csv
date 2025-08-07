@@ -11,3 +11,7 @@ SWDOWN,sin_time+cos_time+T2,0.0633,resnet,4,4,25,4016908,spc,inter_area,32,0.001
 SWDOWN,sin_time+cos_time+T2,0.0718,resnet,4,4,50,4016908,spc,inter_area,32,0.001,mae,True,0:52:44,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Other-Models,True,cpu
 SWDOWN,sin_time+cos_time+T2,0.0458,resnet,6,6,50,19691898,spc,inter_area,32,0.001,mae,True,2:08:23,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Best-Model,True,cpu
 SWDOWN,sin_time+cos_time+T2,0.0452,resnet,8,8,50,61564621,spc,inter_area,32,0.001,mae,True,5:50:22,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Best-Model,True,cpu
+SWDOWN,sin_time+cos_time+T2,0.2355,resnet,8,8,10,61564621,spc,inter_area,32,0.001,mae,True,0:12:20,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Other-Models,True,cpu
+SWDOWN,sin_time+cos_time+T2,0.1544,resnet,8,8,25,61564621,spc,inter_area,32,0.001,mae,True,0:30:05,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Other-Models,True,cpu
+SWDOWN,T2+U10+V10,0.1307,resnet,8,8,50,61564621,spc,inter_area,32,0.001,mae,True,0:58:06,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Other-Models,True,cpu
+SWDOWN,sin_time+cos_time+T2,0.0728,resnet,4,4,10,4015580,spc,inter_area,32,0.001,mae,True,0:09:42,/home/gvaillant1/downscaling/pretrained-models/SWDOWN/SWDOWN-Other-Models,True,cpu
