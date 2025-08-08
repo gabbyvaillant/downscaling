@@ -4,3 +4,5 @@ U10,PSFC+T2+V10+PBLH,0.0619,resnet,4,4,50,4016944,spc,inter_area,32,0.001,mae,Tr
 U10,PSFC+T2+V10+PBLH,0.0783,resnet,6,6,50,19691952,spc,inter_area,32,0.001,mae,True,1:19:24,/home/gvaillant1/downscaling/pretrained-models/U10/U10-Other-Models,True,cpu
 U10,PSFC+T2+V10+PBLH,0.0524,resnet,8,8,50,61564693,spc,inter_area,32,0.001,mae,True,4:05:04,/home/gvaillant1/downscaling/pretrained-models/U10/U10-Best-Model,True,cpu
 U10,PSFC+T2+V10+PBLH,0.0648,resnet,8,8,26,61564693,spc,inter_area,32,0.001,mae,True,2:22:50,/home/gvaillant1/downscaling/pretrained-models/U10/U10-Other-Models,True,cpu
+U10,PSFC+T2+V10+PBLH,0.0732,resnet,4,4,75,4015616,spc,inter_area,32,0.001,mae,True,1:35:48,/home/gvaillant1/downscaling/pretrained-models/U10/U10-Other-Models,True,cpu
+U10,PSFC+T2+V10+PBLH,0.0703,resnet,4,8,75,15622568,spc,inter_area,32,0.001,mae,True,1:36:35,/home/gvaillant1/downscaling/pretrained-models/U10/U10-Other-Models,True,cpu
